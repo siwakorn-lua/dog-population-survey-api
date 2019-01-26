@@ -1,0 +1,23 @@
+{
+  "name": "dog-population-survey-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siwakorn1997/dog-population-survey-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/siwakorn1997/dog-population-survey-api/issues"
+  },
+  "homepage": "https://github.com/siwakorn1997/dog-population-survey-api#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
