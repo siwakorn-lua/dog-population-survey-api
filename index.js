@@ -96,11 +96,11 @@ app.post('/forgot', function(req, res) {
 })
 
 app.post('/user/update', function(req, res) {
-  // do something here
+  // finished
 })
 
 app.post('/dog/add', function(req, res) {
-  // do something here
+  // finished
 })
 
 app.post('/dog/update', function(req, res) {
