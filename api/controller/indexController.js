@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const indexModel = require('../model/indexModel');
+const indexModel = require('../model/User');
 const jwt = require('jsonwebtoken');
 
 exports.register = function(req, res) {
@@ -10,11 +10,7 @@ exports.register = function(req, res) {
 
     indexModel.register(data, (error, databack) => {
         if (error) throw error;        
-        if (databack != null) {
-            res.json({ message: 'Already have this username' });
-        } else {
-            res.json({ message: 'Registered successfully' });
-        } 
+        res.json(databack)
     });
 };
 
