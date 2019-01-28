@@ -104,7 +104,7 @@ app.post('/dog/add', function(req, res) {
 })
 
 app.post('/dog/update', function(req, res) {
-  // do something here
+  // finished
 })
 
 app.post('/dog/syn', function(req, res) {

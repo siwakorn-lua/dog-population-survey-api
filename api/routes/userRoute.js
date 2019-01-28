@@ -6,6 +6,9 @@ module.exports = function(app){
     
     app.route('/addDog')
         .post(userController.addDog);
+    
+    app.route('/updateDog')
+        .post(userController.addDog);
 
     app.post('/updateUser/:username')
         .post(userController.updateUser);

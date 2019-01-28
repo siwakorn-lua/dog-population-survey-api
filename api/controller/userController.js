@@ -75,5 +75,13 @@ exports.addDog = function(req, res) {
     });
 };
 
+exports.updateDog = function(req, res) {
+    let data = req.body;
+    userModel.updateDog(data, (error, databack) => {
+        if (error) throw error;        
+        res.json(databack)
+    });
+};
+
 
 
