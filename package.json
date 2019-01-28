@@ -17,12 +17,15 @@
   },
   "homepage": "https://github.com/siwakorn1997/dog-population-survey-api#readme",
   "dependencies": {
-    "bcrypt": "^3.0.3",
+    "bcrypt": "^1.0.3",
+    "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
     "morgan": "^1.9.1",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.9",
+    "pg-promise": "^8.5.5"
   }
 }
