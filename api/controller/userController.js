@@ -59,6 +59,21 @@ exports.verifyToken = function(req, res, next) {
     else { res.status(401).send('Cannot get header'); }
 }
 
+exports.updateUser = function(req, res) {
+    let data = req.body;
+    userModel.updateUser(req.params.username,data, (error, databack) => {
+        if (error) throw error;        
+        res.json(databack)
+    });
+};
+
+exports.addDog = function(req, res) {
+    let data = req.body;   
+    userModel.addDog(data, (error, databack) => {
+        if (error) throw error;        
+        res.json(databack)
+    });
+};
 
 
 
