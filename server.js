@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const config = require('./config.json');
 
 // PROMISE // 
 // const promise = require('bluebird');
