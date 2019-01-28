@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const indexModel = require('../model/User');
+const userModel = require('../model/userModel');
 const jwt = require('jsonwebtoken');
 
 exports.register = function(req, res) {
@@ -8,7 +8,7 @@ exports.register = function(req, res) {
     let data = req.body;
     data.password = bcrypt.hashSync(data.password, salt);    
 
-    indexModel.register(data, (error, databack) => {
+    userModel.register(data, (error, databack) => {
         if (error) throw error;        
         res.json(databack)
     });
@@ -16,17 +16,18 @@ exports.register = function(req, res) {
 
 
 exports.login = function(req, res) {
-    adminModel.getUserByUsername(req.body, (error, data) => {
+    
+    userModel.getUserByUsername(req.body, (error, data) => {
         if (error) throw error;
 
         if (data.length == 0) {
             res.status(401).send({ message: 'ไม่มีชื่อผู้ใช้นี้ในระบบ' })
         } else {
-            var admin = data;
+            var user = data;
 
-            bcrypt.compare(req.body.password, admin.password, function(err, match) {
+            bcrypt.compare(req.body.password, user.password, function(err, match) {
                 if (match) {
-                    const token = jwt.sign({ adminid: admin.id, username: admin.username });
+                    const token = jwt.sign({ username: user.username });
 
                     res.json({ token: token });
                 } else {
@@ -43,10 +44,10 @@ exports.verifyToken = function(req, res, next) {
         const decoded = jwt.decode(token, { complete: true });
 
         if (decoded) {
-            adminModel.getUserByUserId(decoded.payload.adminid, function(error, data) {
+            indexModel.getUserByUsername(decoded.payload.username, function(error, data) {
                 if (error) throw error;
                 if (data != null) {
-                    req.adminid = data.id;
+                    req.username = data.username;
                     
                     return next();
                 }

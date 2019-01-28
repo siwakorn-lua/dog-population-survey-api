@@ -24,8 +24,8 @@ app.use((req, res, next) => {
 });
 
 // API // 
-const indexRoute = require('./api/routes/indexRoute');
-indexRoute(app);
+const userRoute = require('./api/routes/userRoute');
+userRoute(app);
 
 // Waiting for Req // 
 app.listen(port, () => console.log(`Listening on port ${port}`));
