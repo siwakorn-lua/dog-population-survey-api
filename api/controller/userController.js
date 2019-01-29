@@ -42,17 +42,21 @@ exports.verifyToken = function(req, res, next) {
     if (req.headers.authorization) {
         const token = req.headers.authorization;
         const decoded = jwt.decode(token, { complete: true });
-
+                
         if (decoded) {
-            indexModel.getUserByUsername(decoded.payload.username, function(error, data) {
-                if (error) throw error;
-                if (data != null) {
-                    req.username = data.username;
-                    
-                    return next();
-                }
-                else { res.status(401).send('Invalid userid'); }
-            });
+            // actual the same person ? //
+            let same = indexModel.getUserByUsername(decoded.payload.username) == req.params.username;
+            if(same){
+                indexModel.getUserByUsername(decoded.payload.username, function(error, data) {
+                    if (error) throw error;
+                    if (data != null) {
+                        req.username = data.username;
+                        
+                        return next();
+                    }
+                    else { res.status(401).send('Invalid userid'); }
+                });
+            }
         }
         else { res.status(401).send('Invalid token'); }
     }
@@ -66,5 +70,19 @@ exports.updateUser = function(req, res) {
         res.json(databack)
     });
 };
+
+exports.verifyPw = function(req, res) {
+    let pw = req.body.password;
+    userModel.verifyPw(req.params.username, (error, databack) => {
+        if (error) throw error; 
+        else{
+            if(pw == databack) res.json("Update Successfully");
+            else{
+                res.json("Password is incorrect");
+            }
+        }       
+    });
+};
+
 
 
