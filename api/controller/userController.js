@@ -39,34 +39,6 @@ exports.login = function(req, res) {
   });
 };
 
-// exports.verifyToken = function(req, res, next) {
-//   if (req.headers.authorization) {
-//     const token = req.headers.authorization;
-//     const decoded = jwt.decode(token, { complete: true });
-//     if (decoded) {
-//       let same = (decoded.payload.username == req.body.username);
-//       if (same) {
-//         userModel.getUserByUsername(decoded.payload, function(
-//           error,
-//           data
-//         ) {
-//           if (error) throw error;
-//           if (data.length != 0) {
-//             res.status(200).send({message: "ยืนยันผู้ใช้ถูกต้อง"})
-//             return next();
-//           } else {
-//             res.status(401).send("ชื่อผู้ใช้ไม่มีอยู่จริง");
-//           }
-//         });
-//       }
-//     } else {
-//       res.status(401).send("Invalid token");
-//     }
-//   } else {
-//     res.status(401).send("Cannot get header");
-//   }
-// };
-
 exports.updateUser = function(req, res) {
   authController.verifyToken(req, res, function() {
     let data = req.body;
@@ -75,11 +47,6 @@ exports.updateUser = function(req, res) {
       res.json(databack);
     });
   });
-  // let data = req.body;
-  // userModel.updateUser(req.params.username, data, (error, databack) => {
-  //   if (error) throw error;
-  //   res.json(databack);
-  // });
 };
 
 exports.forgotPassword = function(req, res) {

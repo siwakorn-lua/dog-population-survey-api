@@ -1,13 +1,5 @@
 const pool = require("../../pool");
-const config = require("../../config");
-const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: config.emailUser,
-    pass: config.emailPassword
-  }
-});
+const bcrypt = require("bcryptjs");
 
 exports.updateUser = function(username, data, callback) {
   pool.getConnection(function(err, connection) {
@@ -76,7 +68,7 @@ exports.register = function(data, callback) {
           callback(null, result);
         } else {
           connection.query(
-            "insert into user values (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "insert into user values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [
               data.username,
               data.password,
@@ -100,7 +92,9 @@ exports.register = function(data, callback) {
                 ":" +
                 now.getSeconds(),
               data.email,
-              data.phone
+              data.phone,
+              data.questionTopic,
+              data.questionAnswer
             ],
             function(err, result, fields) {
               if (err) callback(err, null);
@@ -114,28 +108,24 @@ exports.register = function(data, callback) {
   });
 };
 
+// Assume there will be a question for those who forgot their password
 exports.forgotPassword = function(data, callback) {
   pool.getConnection(function(err, connection) {
+    if(err) callback(err,null)
     connection.query(
-      "select username,password from user where email = ?",
-      [data.email],
+      "select questionTopic,questionAnswer from user where username = ?",
+      [data.username],
       function(err, result, field) {
         if (err) callback(err, null);
-        let mailOptions = {
-          from: "non-reply.Doggiesapp@gmail.com",
-          to: data.email,
-          subject: "Forget Password Doggies Application",
-          html:
-            "<b>Do you forget password?</b><br/> Your account : " +
-            result[0].username +
-            " <br/>password : " +
-            result[0].password +
-            "<br/><br/>Doggies Application Authorization"
-        };
-        transporter.sendMail(mailOptions, function(err, info) {
-          if (err) callback(err, null);
-          callback(null, "success");
-        });
+        if(data.questionTopic == result[0].questionTopic && data.questionAnswer == result[0].questionAnswer){
+          let salt = bcrypt.genSaltSync(10)
+          let encryptedPassword = bcrypt.hashSync(data.password,salt)
+          connection.query("update user set password = ? where username = ?",[encryptedPassword,data.username],function(err, results, fields){
+            if(err) callback(err,null)
+            connection.release()
+            callback(null,results)
+          })
+        }
       }
     );
   });

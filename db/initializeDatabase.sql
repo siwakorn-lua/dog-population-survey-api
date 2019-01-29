@@ -13,6 +13,8 @@ CREATE TABLE `doggy`.`user` (
   `registerDate` DATETIME NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `phone` VARCHAR(10) NULL,
+  `questionTopic` VARCHAR(1) NOT NULL,
+  `questionAnswer` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`username`));
 
 CREATE TABLE `doggy`.`dog` (
