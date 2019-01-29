@@ -45,7 +45,6 @@ exports.updateUser = function(username, data, callback) {
 exports.getUserByUsername = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null); // not connected!
-
     // Use the connection
     connection.query(
       "SELECT * FROM user where username = ?",
@@ -59,7 +58,6 @@ exports.getUserByUsername = function(data, callback) {
         else {
           callback(null, results);
         }
-
         // Don't use the connection here, it has been returned to the pool.
       }
     );
