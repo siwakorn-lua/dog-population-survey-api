@@ -8,12 +8,12 @@ module.exports = function(app) {
   app.route("/user/update").post(userController.updateUser);
   app.route("/user/retrieve").post(userController.retrieveUserData);
 
-  const dogController = require('../controller/dogController')
+  const dogController = require("../controller/dogController");
   // need authentication
-  app.route("/addDog").post(dogController.addDog);
+  app.route("/dog/add").post(dogController.addDog);
   app.route("/updateDog").post(dogController.addDog);
 
-  const reportController = require('../controller/reportController')
+  const reportController = require("../controller/reportController");
   // need authentication
   app.route("/report").get(reportController.countAllDog);
   app.route("/report/:province").get(reportController.countDogByProvince);
