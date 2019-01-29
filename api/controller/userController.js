@@ -1,76 +1,97 @@
-const bcrypt = require('bcryptjs');
-const userModel = require('../model/userModel');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const userModel = require("../model/userModel");
+const jwt = require("jsonwebtoken");
 
 exports.register = function(req, res) {
+  const salt = bcrypt.genSaltSync(10);
+  let data = req.body;
+  data.password = bcrypt.hashSync(data.password, salt);
 
-    const salt = bcrypt.genSaltSync(10);
-    let data = req.body;
-    data.password = bcrypt.hashSync(data.password, salt);    
-
-    userModel.register(data, (error, databack) => {
-        if (error) throw error;        
-        res.json(databack)
-    });
+  userModel.register(data, (error, databack) => {
+    if (error) throw error;
+    res.json(databack);
+  });
 };
 
-
 exports.login = function(req, res) {
-    
-    userModel.getUserByUsername(req.body, (error, data) => {
-        if (error) throw error;
+  userModel.getUserByUsername(req.body, (error, data) => {
+    if (error) throw error;
 
-        if (data.length == 0) {
-            res.status(401).send({ message: 'ไม่มีชื่อผู้ใช้นี้ในระบบ' })
+    if (data.length == 0) {
+      res.status(401).send({ message: "ไม่มีชื่อผู้ใช้นี้ในระบบ" });
+    } else {
+      var user = data;
+
+      bcrypt.compare(req.body.password, user.password, function(err, match) {
+        if (match) {
+          const token = jwt.sign({ username: user.username });
+
+          res.json({ token: token });
         } else {
-            var user = data;
-
-            bcrypt.compare(req.body.password, user.password, function(err, match) {
-                if (match) {
-                    const token = jwt.sign({ username: user.username });
-
-                    res.json({ token: token });
-                } else {
-                    res.status(401).send({ message: 'รหัสผ่านไม่ถูกต้อง' })
-                }
-            });
+          res.status(401).send({ message: "รหัสผ่านไม่ถูกต้อง" });
         }
-    });
+      });
+    }
+  });
 };
 
 exports.verifyToken = function(req, res, next) {
-    if (req.headers.authorization) {
-        const token = req.headers.authorization;
-        const decoded = jwt.decode(token, { complete: true });
+  if (req.headers.authorization) {
+    const token = req.headers.authorization;
+    const decoded = jwt.decode(token, { complete: true });
 
-        if (decoded) {
-            indexModel.getUserByUsername(decoded.payload.username, function(error, data) {
-                if (error) throw error;
-                if (data != null) {
-                    req.username = data.username;
-                    
-                    return next();
-                }
-                else { res.status(401).send('Invalid userid'); }
-            });
-        }
-        else { res.status(401).send('Invalid token'); }
+    if (decoded) {
+      // actual the same person ? //
+      let same =
+        indexModel.getUserByUsername(decoded.payload.username) ==
+        req.params.username;
+      if (same) {
+        indexModel.getUserByUsername(decoded.payload.username, function(
+          error,
+          data
+        ) {
+          if (error) throw error;
+          if (data != null) {
+            req.username = data.username;
+
+            return next();
+          } else {
+            res.status(401).send("Invalid userid");
+          }
+        });
+      }
+    } else {
+      res.status(401).send("Invalid token");
     }
-    else { res.status(401).send('Cannot get header'); }
-}
-
-exports.updateUser = function(req, res) {
-    let data = req.body;
-    userModel.updateUser(req.params.username,data, (error, databack) => {
-        if (error) throw error;        
-        res.json(databack)
-    });
+  } else {
+    res.status(401).send("Cannot get header");
+  }
 };
 
-exports.forgotPassword = function(req,res){
-    let data = req.body
-    userModel.forgotPassword(data,(error, databack) => {
-        if(error) throw error
-        res.json(databack)
-    })
-}
+exports.updateUser = function(req, res) {
+  let data = req.body;
+  userModel.updateUser(req.params.username, data, (error, databack) => {
+    if (error) throw error;
+    res.json(databack);
+  });
+};
+
+exports.forgotPassword = function(req, res) {
+  let data = req.body;
+  userModel.forgotPassword(data, (error, databack) => {
+    if (error) throw error;
+    res.json(databack);
+  });
+};
+exports.verifyPw = function(req, res) {
+  let pw = req.body.password;
+  userModel.verifyPw(req.params.username, (error, databack) => {
+    if (error) throw error;
+    else {
+      if (pw == databack) res.json("Update Successfully");
+      else {
+        res.json("Password is incorrect");
+      }
+    }
+  });
+};
