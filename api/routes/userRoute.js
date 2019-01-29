@@ -4,7 +4,6 @@ module.exports = function(app) {
   app.route("/register").post(userController.register);
   app.route("/updateUser/:username").post(userController.updateUser);
   app.route("/forgot").post(userController.forgotPassword);
-  app.route("/verify").post(userController.verifyToken);
 
   const dogController = require('../controller/dogController')
   app.route("/addDog").post(dogController.addDog);

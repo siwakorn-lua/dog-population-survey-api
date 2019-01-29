@@ -140,25 +140,3 @@ exports.forgotPassword = function(data, callback) {
     );
   });
 };
-
-exports.verifyPw = function(username, callback) {
-  pool.getConnection(function(err, connection) {
-    if (err) callback(err, null); // not connected!
-    // Use the connection
-    connection.query(
-      "SELECT password FROM user where username = ?",
-      [username],
-      function(error, results, fields) {
-        // When done with the connection, release it.
-        connection.release();
-        // Handle error after the release.
-        if (error) callback(error, null);
-        else {
-          callback(null, results);
-        }
-
-        // Don't use the connection here, it has been returned to the pool.
-      }
-    );
-  });
-};

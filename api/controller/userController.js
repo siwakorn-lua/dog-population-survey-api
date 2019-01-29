@@ -81,16 +81,3 @@ exports.forgotPassword = function(req, res) {
     res.json(databack);
   });
 };
-
-exports.verifyPw = function(req, res) {
-  let pw = req.body.password;
-  userModel.verifyPw(req.params.username, (error, databack) => {
-    if (error) throw error;
-    else {
-      if (pw == databack) res.json("Update Successfully");
-      else {
-        res.json("Password is incorrect");
-      }
-    }
-  });
-};
