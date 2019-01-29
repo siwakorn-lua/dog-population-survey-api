@@ -8,7 +8,7 @@ exports.updateUser = function(data, callback) {
     // Use the connection
     connection.query(
       "update user set firstName = ?, lastName = ?, address = ?, subdistrict = ?," +
-        " district = ?, province = ? where username = ?",
+        " district = ?, province = ?, email = ?, phone = ?, questionTopic = ?, questionAnswer  = ? where username = ?",
       [
         data.firstName,
         data.lastName,
@@ -16,12 +16,15 @@ exports.updateUser = function(data, callback) {
         data.subdistrict,
         data.district,
         data.province,
+        data.email,
+        data.phone,
+        data.questionTopic,
+        data.questionAnswer,
         data.username
       ],
       function(error, results, fields) {
         // When done with the connection, release it.
         connection.release();
-
         // Handle error after the release.
         if (error) callback(error, null);
         else {
@@ -111,20 +114,27 @@ exports.register = function(data, callback) {
 // Assume there will be a question for those who forgot their password
 exports.forgotPassword = function(data, callback) {
   pool.getConnection(function(err, connection) {
-    if(err) callback(err,null)
+    if (err) callback(err, null);
     connection.query(
       "select questionTopic,questionAnswer from user where username = ?",
       [data.username],
       function(err, result, field) {
         if (err) callback(err, null);
-        if(data.questionTopic == result[0].questionTopic && data.questionAnswer == result[0].questionAnswer){
-          let salt = bcrypt.genSaltSync(10)
-          let encryptedPassword = bcrypt.hashSync(data.password,salt)
-          connection.query("update user set password = ? where username = ?",[encryptedPassword,data.username],function(err, results, fields){
-            if(err) callback(err,null)
-            connection.release()
-            callback(null,results)
-          })
+        if (
+          data.questionTopic == result[0].questionTopic &&
+          data.questionAnswer == result[0].questionAnswer
+        ) {
+          let salt = bcrypt.genSaltSync(10);
+          let encryptedPassword = bcrypt.hashSync(data.password, salt);
+          connection.query(
+            "update user set password = ? where username = ?",
+            [encryptedPassword, data.username],
+            function(err, results, fields) {
+              if (err) callback(err, null);
+              connection.release();
+              callback(null, results);
+            }
+          );
         }
       }
     );
