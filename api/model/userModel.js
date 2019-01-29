@@ -1,7 +1,7 @@
 const pool = require("../../pool");
 const bcrypt = require("bcryptjs");
 
-exports.updateUser = function(username, data, callback) {
+exports.updateUser = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null); // not connected!
 
@@ -16,7 +16,7 @@ exports.updateUser = function(username, data, callback) {
         data.subdistrict,
         data.district,
         data.province,
-        username
+        data.username
       ],
       function(error, results, fields) {
         // When done with the connection, release it.

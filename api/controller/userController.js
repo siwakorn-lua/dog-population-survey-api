@@ -42,12 +42,25 @@ exports.login = function(req, res) {
 exports.updateUser = function(req, res) {
   authController.verifyToken(req, res, function() {
     let data = req.body;
-    userModel.updateUser(req.params.username, data, (error, databack) => {
+    userModel.updateUser(data, (error, databack) => {
       if (error) throw error;
       res.json(databack);
     });
   });
 };
+
+exports.retrieveUserData = function(req, res){
+  authController.verifyToken(req, res, function(){
+    userModel.getUserByUsername(req.body, (err, databack) => {
+      if(err){
+        console.log(err)
+        res.status(401).json(err)
+      }else{
+        res.json(databack)
+      }
+    })
+  })
+}
 
 exports.forgotPassword = function(req, res) {
   let data = req.body;

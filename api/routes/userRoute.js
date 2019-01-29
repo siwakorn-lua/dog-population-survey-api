@@ -5,7 +5,8 @@ module.exports = function(app) {
   app.route("/register").post(userController.register);
   app.route("/forgot").post(userController.forgotPassword);
   // need authentication
-  app.route("/updateUser/:username").post(userController.updateUser);
+  app.route("/user/update").post(userController.updateUser);
+  app.route("/user/retrieve").post(userController.retrieveUserData);
 
   const dogController = require('../controller/dogController')
   // need authentication
