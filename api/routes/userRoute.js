@@ -6,4 +6,8 @@ module.exports = function(app) {
   const dogController = require('../controller/dogController')
   app.route("/addDog").post(dogController.addDog);
   app.route("/updateDog").post(dogController.addDog);
+
+  const reportController = require('../controller/reportController')
+  app.route("/report").get(reportController.countAllDog);
+  app.route("/report/:province").get(reportController.countDogByProvince);
 };
