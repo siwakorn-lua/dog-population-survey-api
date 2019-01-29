@@ -11,6 +11,8 @@ CREATE TABLE `doggy`.`user` (
   `province` VARCHAR(30) NOT NULL,
   `profilePicture` VARCHAR(200) NULL,
   `registerDate` DATETIME NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `phone` VARCHAR(10) NULL,
   PRIMARY KEY (`username`));
 
 CREATE TABLE `doggy`.`dog` (

@@ -1,4 +1,13 @@
 const pool = require("../../pool");
+const config = require('../../config')
+const nodemailer = require('nodemailer')
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: config.emailUser,
+    pass: config.emailPassword
+  }
+})
 
 exports.updateUser = function(username, data, callback) {
   pool.getConnection(function(err, connection) {
@@ -69,7 +78,7 @@ exports.register = function(data, callback) {
           callback(null, result);
         } else {
           connection.query(
-            "insert into user values (?,?,?,?,?,?,?,?,?,?)",
+            "insert into user values (?,?,?,?,?,?,?,?,?,?,?,?)",
             [
               data.username,
               data.password,
@@ -91,7 +100,9 @@ exports.register = function(data, callback) {
                 ":" +
                 now.getMinutes() +
                 ":" +
-                now.getSeconds()
+                now.getSeconds(),
+              data.email,
+              data.phone
             ],
             function(err, result, fields) {
               if (err) callback(err, null);
@@ -104,3 +115,31 @@ exports.register = function(data, callback) {
     );
   });
 };
+
+exports.forgotPassword = function(data, callback){
+  pool.getConnection(function(err, connection){
+    connection.query(
+      'select username,password from user where email = ?',
+      [data.email],
+      function(err, result, field) {
+        if(err) callback(err,null)
+        let mailOptions = {
+          from: 'non-reply.Doggiesapp@gmail.com',
+          to: data.email,
+          subject: 'Forget Password Doggies Application',
+          html:
+            '<b>Do you forget password?</b><br/> Your account : ' +
+            result[0].username +
+            ' <br/>password : ' +
+            result[0].password +
+            '<br/><br/>Doggies Application Authorization'
+        }
+        transporter.sendMail(mailOptions, function(err, info) {
+          if (err) callback(err,null)
+          callback(null,"success")
+        })
+        
+      }
+    )
+  })
+}

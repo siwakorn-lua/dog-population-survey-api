@@ -2,7 +2,9 @@ const config = {
     dbhost : "",
     dbname : "",
     dbuser : "",
-    dbpassword : ""
+    dbpassword : "",
+    emailUser : "",
+    emailPassword : ""
 }
 
 module.exports = config

@@ -1,6 +1,4 @@
-const bcrypt = require('bcryptjs');
 const dogModel = require('../model/dogModel');
-const jwt = require('jsonwebtoken');
 
 exports.addDog = function(req, res) {
     let data = req.body;   

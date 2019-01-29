@@ -67,4 +67,10 @@ exports.updateUser = function(req, res) {
     });
 };
 
-
+exports.forgotPassword = function(req,res){
+    let data = req.body
+    userModel.forgotPassword(data,(error, databack) => {
+        if(error) throw error
+        res.json(databack)
+    })
+}
