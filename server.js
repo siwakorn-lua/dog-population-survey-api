@@ -27,7 +27,8 @@ const route = require("./api/routes/route");
 route(app);
 
 // Waiting for Req //
-app.listen(port, () => console.log(`Listening on port ${port}`));
+var server = app.listen(port, () => console.log(`Listening on port ${port}`));
+server.setTimeout(5000)
 
 // REALTIME USING SOCKET IO //
 // var serverBackEnd = app.listen(port);
