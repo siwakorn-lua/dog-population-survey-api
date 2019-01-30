@@ -1,3 +1,4 @@
+const pool = require("../../pool");
 exports.countAllDog = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null) // not connected!

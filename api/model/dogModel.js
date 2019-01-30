@@ -37,7 +37,6 @@ exports.addDog = function(data, callback) {
         else {
           callback(null, results);
         }
-
         // Don't use the connection here, it has been returned to the pool.
       }
     );

@@ -1,14 +1,14 @@
+const reportModel = require('../model/reportModel');
+
 exports.countAllDog = function(req, res) {
-    let data = req.body;   
-    console.log("dan")
-    dogModel.countAllDog(data, (error, databack) => {
+    reportModel.countAllDog(req, (error, databack) => {
         if (error) throw error;        
-        res.json(databack)
+        res.json(databack);
     });
 };
 
 exports.countDogByProvince = function(req, res) {
-    dogModel.countDogByProvince((error, databack) => {
+    reportModel.countDogByProvince((error, databack) => {
         if (error) throw error;        
         res.json(databack)
     });
