@@ -67,7 +67,8 @@ exports.updateDog = function(data, callback) {
         data.province,
         data.gps,
         data.remark,
-        now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay()
+        now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay(),
+        data.dogID
       ],
       function(error, results, fields) {
         // When done with the connection, release it.
