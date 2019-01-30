@@ -136,8 +136,7 @@ exports.countDogByProvince = function(req, res) {
 var jsonexport = require('jsonexport');
 var fs = require('fs');
 exports.reportCsv = function(req, res) {
-    let rabiesFlag;    
-  // authController.verifyToken(req, res, function() {  
+  authController.verifyToken(req, res, function() {  
     reportModel.reportCsv(req, (error, databack) => {
       if (error) throw error;
           for(i in databack){
@@ -161,6 +160,6 @@ exports.reportCsv = function(req, res) {
           res.json(csv);
 });
     });
-  // });
+  });
 };
 
