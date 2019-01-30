@@ -6,9 +6,10 @@ exports.addDog = function(data, callback) {
     if (err) callback(err, null); // not connected!
     // Use the connection
     connection.query(
-      "insert into dog(dogName,age,ageRange,birthDate,breed,gender,color,sterilized,address,subdistrict,district,province,gps,remark,indoorFlag,outdoorFlag,strayFlag,owner,submitDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "insert into dog(dogName,dogType,age,ageRange,birthDate,breed,gender,color,sterilized,address,subdistrict,district,province,gps,remark,owner,submitDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       [
         data.dogName,
+        data.dogType,
         data.age,
         data.ageRange,
         data.birthDate,
@@ -22,9 +23,6 @@ exports.addDog = function(data, callback) {
         data.province,
         data.gps,
         data.remark,
-        data.indoorFlag,
-        data.outdoorFlag,
-        data.strayFlag,
         data.username,
         now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay()
       ],

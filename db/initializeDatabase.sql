@@ -1,5 +1,11 @@
 USE doggy;
 
+DROP TABLE IF EXISTS `doggy`.`dogpicture`;
+DROP TABLE IF EXISTS `doggy`.`inject`;
+DROP TABLE IF EXISTS `doggy`.`vaccine`;
+DROP TABLE IF EXISTS `doggy`.`dog`;
+DROP TABLE IF EXISTS `doggy`.`user`;
+
 CREATE TABLE `doggy`.`user` (
   `username` VARCHAR(50) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
@@ -20,6 +26,7 @@ CREATE TABLE `doggy`.`user` (
 CREATE TABLE `doggy`.`dog` (
   `dogID` INT NOT NULL AUTO_INCREMENT,
   `dogName` VARCHAR(50) NULL,
+  `dogType` VARCHAR(10) NOT NULL,
   `age` INT NULL,
   `ageRange` VARCHAR(50) NOT NULL,
   `birthDate` DATE NULL,
@@ -33,9 +40,6 @@ CREATE TABLE `doggy`.`dog` (
   `province` VARCHAR(50) NOT NULL,
   `gps` VARCHAR(100) NOT NULL,
   `remark` VARCHAR(200) NULL,
-  `indoorFlag` VARCHAR(1) NULL,
-  `outdoorFlag` VARCHAR(1) NULL,
-  `strayFlag` VARCHAR(1) NULL,
   `owner` VARCHAR(50) NOT NULL,
   `submitDate` DATE NOT NULL,
   PRIMARY KEY (`dogID`),
