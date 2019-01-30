@@ -1,6 +1,6 @@
 USE doggy;
 
-CREATE TABLE `doggy`.`user` (
+CREATE TABLE `user` (
   `username` VARCHAR(50) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
   `firstName` VARCHAR(50) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE `doggy`.`user` (
   `questionAnswer` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`username`));
 
-CREATE TABLE `doggy`.`dog` (
+CREATE TABLE `dog` (
   `dogID` INT NOT NULL AUTO_INCREMENT,
   `dogName` VARCHAR(50) NULL,
   `age` INT NULL,
@@ -42,26 +42,26 @@ CREATE TABLE `doggy`.`dog` (
   INDEX `owner_idx` (`owner` ASC),
   CONSTRAINT `owner`
     FOREIGN KEY (`owner`)
-    REFERENCES `doggy`.`user` (`username`)
+    REFERENCES `user` (`username`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `doggy`.`dogpicture` (
+CREATE TABLE `dogpicture` (
   `dogID` INT NOT NULL,
   `picture` VARCHAR(200) NOT NULL,
   PRIMARY KEY (`dogID`, `picture`),
   CONSTRAINT `dogID`
     FOREIGN KEY (`dogID`)
-    REFERENCES `doggy`.`dog` (`dogID`)
+    REFERENCES `dog` (`dogID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
 
-CREATE TABLE `doggy`.`vaccine` (
+CREATE TABLE `vaccine` (
   `vaccineID` INT NOT NULL AUTO_INCREMENT,
   `vaccineName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`vaccineID`));
   
-CREATE TABLE `doggy`.`inject` (
+CREATE TABLE `inject` (
   `dogID` INT NOT NULL,
   `vaccineID` INT NOT NULL,
   `date` DATE NOT NULL,
@@ -69,11 +69,11 @@ CREATE TABLE `doggy`.`inject` (
   INDEX `vaccine_idx` (`vaccineID` ASC),
   CONSTRAINT `dog`
     FOREIGN KEY (`dogID`)
-    REFERENCES `doggy`.`dog` (`dogID`)
+    REFERENCES `dog` (`dogID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `vaccine`
     FOREIGN KEY (`vaccineID`)
-    REFERENCES `doggy`.`vaccine` (`vaccineID`)
+    REFERENCES `vaccine` (`vaccineID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE);
