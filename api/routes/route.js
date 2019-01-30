@@ -1,15 +1,20 @@
 module.exports = function(app) {
   const userController = require("../controller/userController");
+  // do not need authentication
   app.route("/login").post(userController.login);
   app.route("/register").post(userController.register);
-  app.route("/updateUser/:username").post(userController.updateUser);
   app.route("/forgot").post(userController.forgotPassword);
+  // need authentication
+  app.route("/user/update").post(userController.updateUser);
+  app.route("/user/retrieve").post(userController.retrieveUserData);
 
-  const dogController = require('../controller/dogController')
-  app.route("/addDog").post(dogController.addDog);
+  const dogController = require("../controller/dogController");
+  // need authentication
+  app.route("/dog/add").post(dogController.addDog);
   app.route("/updateDog").post(dogController.addDog);
 
-  const reportController = require('../controller/reportController')
+  const reportController = require("../controller/reportController");
+  // need authentication
   app.route("/report").get(reportController.countAllDog);
   app.route("/report/:province").get(reportController.countDogByProvince);
 };
