@@ -26,6 +26,32 @@ app.use((req, res, next) => {
 const userRoute = require('./api/routes/userRoute');
 userRoute(app);
 
+const config = require("./config");
+const mysql = require("mysql");
+var pool = mysql.createPool({
+  connectionLimit: 10,
+  host: config.dbhost,
+  user: config.dbuser,
+  password: config.dbpassword,
+  database: config.dbname,
+})
+// console.log(pool)
+pool.getConnection(function(err, connection) {
+    if (err) throw(err); // not connected!  
+    // Use the connection
+    // connection.query(
+    //   "SELECT count(*) FROM dog",
+    //   function(error, results, fields) {
+    //     // When done with the connection, release it.
+    //     connection.release();
+    //     // Handle error after the release.
+    //     if (error) throw(error);
+    //     else {
+    //       console.log(results);
+    //     }
+    //   }
+    // );
+  });
 // Waiting for Req // 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 

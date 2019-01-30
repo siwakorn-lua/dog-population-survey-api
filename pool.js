@@ -3,10 +3,10 @@ const mysql = require("mysql");
 
 var pool = mysql.createPool({
   connectionLimit: 10,
-  host: config.dbhost || 'localhost',
-  user: config.dbuser || 'root',
-  password: config.dbpassword || '123456',
-  database: config.dbname || 'doggy',
+  host: config.dbhost,
+  user: config.dbuser,
+  password: config.dbpassword,
+  database: config.dbname,
 })
 
 module.exports = pool
