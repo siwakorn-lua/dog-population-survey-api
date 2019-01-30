@@ -10,7 +10,9 @@ exports.register = function(req, res) {
   data.password = bcrypt.hashSync(data.password, salt);
   userModel.register(data, (error, databack) => {
     if (error) throw error;
-    res.json(databack);
+    else{
+      console.log("success")
+    }
   });
 };
 
