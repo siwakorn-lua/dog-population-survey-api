@@ -136,14 +136,15 @@ exports.countDogByProvince = function(req, res) {
 var jsonexport = require('jsonexport');
 var fs = require('fs');
 const nodemailer = require('nodemailer');
+const config = require("../../config");
 
 exports.reportCsv = function(req, res) {
-  // authController.verifyToken(req, res, function() {  
+  authController.verifyToken(req, res, function() {  
     const transporter = nodemailer.createTransport({
       service: 'hotmail',
       auth: {
-        user: '', // your email
-        pass: '' // your email password
+        user: config.emailuser, // your email
+        pass: config.emailpass // your email password
       }
     });
     reportModel.reportCsv(req, (error, databack) => {
@@ -164,11 +165,10 @@ exports.reportCsv = function(req, res) {
             if(err) {
                 return console.log(err);
             }
-            console.log("The file was saved!");
         }); 
           let mailOptions = {
             from: '',                // sender
-            to: req.params.email,                // list of receivers
+            to: req.body.email,                // list of receivers
             subject: 'Dog Info .Csv',              // Mail subject
             html: '<b>Do you receive this mail?</b>',   // HTML body
             attachments: [{   
@@ -186,6 +186,6 @@ exports.reportCsv = function(req, res) {
 });
       
     });
-  // });
+  });
 };
 
