@@ -15,7 +15,7 @@ module.exports = function(app) {
 
   const reportController = require('../controller/reportController')
   // need authentication
-  app.route("/report").get(reportController.countAllDog);
-  app.route("/report/:province").get(reportController.countDogByProvince);
-  app.route("/reportcsv/:email").get(reportController.reportCsv);
+  app.route("/report").post(reportController.countAllDog);
+  app.route("/report/:province").post(reportController.countDogByProvince);
+  app.route("/reportcsv/:email").post(reportController.reportCsv);
 };
