@@ -135,8 +135,17 @@ exports.countDogByProvince = function(req, res) {
 
 var jsonexport = require('jsonexport');
 var fs = require('fs');
+const nodemailer = require('nodemailer');
+
 exports.reportCsv = function(req, res) {
-  authController.verifyToken(req, res, function() {  
+  // authController.verifyToken(req, res, function() {  
+    const transporter = nodemailer.createTransport({
+      service: 'hotmail',
+      auth: {
+        user: '', // your email
+        pass: '' // your email password
+      }
+    });
     reportModel.reportCsv(req, (error, databack) => {
       if (error) throw error;
           for(i in databack){
@@ -157,9 +166,26 @@ exports.reportCsv = function(req, res) {
             }
             console.log("The file was saved!");
         }); 
+          let mailOptions = {
+            from: '',                // sender
+            to: req.params.email,                // list of receivers
+            subject: 'Dog Info .Csv',              // Mail subject
+            html: '<b>Do you receive this mail?</b>',   // HTML body
+            attachments: [{   
+              filename: 'test.csv',
+              content: csv
+            }],
+          };
+          transporter.sendMail(mailOptions, function (err, info) {
+            if(err)
+              throw(err)
+            else
+              console.log("Sent!!!");
+          });
           res.json(csv);
 });
+      
     });
-  });
+  // });
 };
 
