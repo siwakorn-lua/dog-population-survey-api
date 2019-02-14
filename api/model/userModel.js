@@ -8,7 +8,7 @@ exports.updateUser = function(data, callback) {
     // Use the connection
     connection.query(
       "update user set firstName = ?, lastName = ?, address = ?, subdistrict = ?," +
-        " district = ?, province = ?, email = ?, phone = ?, questionTopic = ?, questionAnswer  = ? where username = ?",
+        " district = ?, province = ?, phone = ?, lineID = ?, facebookID = ?, googleID = ? where email = ?",
       [
         data.firstName,
         data.lastName,
@@ -16,11 +16,11 @@ exports.updateUser = function(data, callback) {
         data.subdistrict,
         data.district,
         data.province,
-        data.email,
         data.phone,
-        data.questionTopic,
-        data.questionAnswer,
-        data.username
+        data.lineID,
+        data.facebookID,
+        data.googleID,
+        data.email,
       ],
       function(error, results, fields) {
         // When done with the connection, release it.
@@ -42,8 +42,8 @@ exports.getUserByUsername = function(data, callback) {
     if (err) callback(err, null); // not connected!
     // Use the connection
     connection.query(
-      "SELECT * FROM user where username = ?",
-      [data.username],
+      "SELECT * FROM user where email = ?",
+      [data.email],
       function(error, results, fields) {
         // When done with the connection, release it.
         connection.release();
@@ -63,17 +63,17 @@ exports.register = function(data, callback) {
   let now = new Date();
   pool.getConnection(function(err, connection) {
     connection.query(
-      "select * from user where username = ?",
-      [data.username],
+      "select * from user where email = ?",
+      [data.email],
       function(err, result, fields) {
         if (err) throw err;
         else if (result.length != 0) {
           callback(null, result);
         } else {
           connection.query(
-            "insert into user values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "insert into user(email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [
-              data.username,
+              data.email,
               data.password,
               data.firstName,
               data.lastName,
@@ -81,7 +81,10 @@ exports.register = function(data, callback) {
               data.subdistrict,
               data.district,
               data.province,
+              data.phone,
               data.profilePicture,
+              data.forgotQuestion,
+              data.forgotAnswer,
               now.getFullYear() +
                 "/" +
                 now.getMonth() +
@@ -93,11 +96,7 @@ exports.register = function(data, callback) {
                 ":" +
                 now.getMinutes() +
                 ":" +
-                now.getSeconds(),
-              data.email,
-              data.phone,
-              data.questionTopic,
-              data.questionAnswer
+                now.getSeconds()
             ],
             function(err, result, fields) {
               if (err) callback(err, null);
@@ -116,8 +115,8 @@ exports.forgotPassword = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
     connection.query(
-      "select questionTopic,questionAnswer from user where username = ?",
-      [data.username],
+      "select questionTopic,questionAnswer from user where email = ?",
+      [data.email],
       function(err, result, field) {
         if (err) callback(err, null);
         if (
@@ -127,8 +126,8 @@ exports.forgotPassword = function(data, callback) {
           let salt = bcrypt.genSaltSync(10);
           let encryptedPassword = bcrypt.hashSync(data.password, salt);
           connection.query(
-            "update user set password = ? where username = ?",
-            [encryptedPassword, data.username],
+            "update user set password = ? where email = ?",
+            [encryptedPassword, data.email],
             function(err, results, fields) {
               if (err) callback(err, null);
               connection.release();

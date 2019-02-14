@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../model/userModel");
 const authController = require("../controller/authController");
-const config = require("../../config");
 
 exports.register = function(req, res) {
   const salt = bcrypt.genSaltSync(10);
@@ -11,7 +10,7 @@ exports.register = function(req, res) {
   userModel.register(data, (error, databack) => {
     if (error) throw error;
     else{
-      console.log("success")
+      res.status(200).send({message: "Successfully register"})
     }
   });
 };
@@ -28,10 +27,10 @@ exports.login = function(req, res) {
       bcrypt.compare(req.body.password, user.password, function(err, match) {
         if (err) {
           console.log(err);
-          res.status(400).send("there some internal error");
+          res.status(500).send("ขณะนี้ระบบกำลังมีปัญหา");
         }
         if (match) {
-          const token = jwt.sign({ username: user.username }, config.secret);
+          const token = jwt.sign({ username: user.username }, process.env.SECRET);
           res.json({ token: token });
         } else {
           res.status(401).send({ message: "รหัสผ่านไม่ถูกต้อง" });
@@ -46,7 +45,7 @@ exports.updateUser = function(req, res) {
     let data = req.body;
     userModel.updateUser(data, (error, databack) => {
       if (error) throw error;
-      res.json(databack);
+      res.status(200).json(databack);
     });
   });
 };
@@ -58,7 +57,7 @@ exports.retrieveUserData = function(req, res){
         console.log(err)
         res.status(401).json(err)
       }else{
-        res.json(databack)
+        res.status(200).json(databack)
       }
     })
   })
@@ -68,6 +67,6 @@ exports.forgotPassword = function(req, res) {
   let data = req.body;
   userModel.forgotPassword(data, (error, databack) => {
     if (error) throw error;
-    res.json(databack);
+    res.status(200).json(databack);
   });
 };

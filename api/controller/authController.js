@@ -1,7 +1,5 @@
-const bcrypt = require("bcryptjs");
 const userModel = require("../model/userModel");
 const jwt = require("jsonwebtoken");
-const config = require("../../config");
 
 exports.verifyToken = function(req, res, next) {
   if (req.headers.authorization) {

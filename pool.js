@@ -1,12 +1,11 @@
-const config = require('./config')
 const mysql = require('mysql')
 
 var pool = mysql.createPool({
   connectionLimit: 10,
-  host: config.dbhost || 'localhost',
-  user: config.dbuser || 'root',
-  password: config.dbpassword || '123456',
-  database: config.dbname || 'doggy'
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 })
 
 module.exports = pool
