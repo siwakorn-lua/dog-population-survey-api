@@ -20,7 +20,7 @@ exports.updateUser = function(data, callback) {
         data.lineID,
         data.facebookID,
         data.googleID,
-        data.email,
+        data.email
       ],
       function(error, results, fields) {
         // When done with the connection, release it.
@@ -62,6 +62,7 @@ exports.getUserByUsername = function(data, callback) {
 exports.register = function(data, callback) {
   let now = new Date();
   pool.getConnection(function(err, connection) {
+    if(err) callback(err,null)
     connection.query(
       "select * from user where email = ?",
       [data.email],
