@@ -20,20 +20,20 @@ exports.login = function(req, res) {
     if (error) throw error;
 
     if (data.length == 0) {
-      res.status(401).send({ message: "ไม่มีชื่อผู้ใช้นี้ในระบบ" });
+      res.status(200).send({ message: "ไม่มีชื่อผู้ใช้นี้ในระบบ" });
     } else {
       var user = data[0];
 
       bcrypt.compare(req.body.password, user.password, function(err, match) {
         if (err) {
           console.log(err);
-          res.status(500).send("ขณะนี้ระบบกำลังมีปัญหา");
+          res.status(200).send("ขณะนี้ระบบกำลังมีปัญหา");
         }
         if (match) {
           const token = jwt.sign({ username: user.username }, process.env.SECRET);
           res.json({ token: token });
         } else {
-          res.status(401).send({ message: "รหัสผ่านไม่ถูกต้อง" });
+          res.status(200).send({ message: "รหัสผ่านไม่ถูกต้อง" });
         }
       });
     }
@@ -55,7 +55,7 @@ exports.retrieveUserData = function(req, res){
     userModel.getUserByUsername(req.body, (err, databack) => {
       if(err){
         console.log(err)
-        res.status(401).json(err)
+        res.status(200).json(err)
       }else{
         res.status(200).json(databack)
       }
