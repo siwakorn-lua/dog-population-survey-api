@@ -2,7 +2,7 @@
   "name": "dog-population-survey-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,18 +17,22 @@
   },
   "homepage": "https://github.com/siwakorn1997/dog-population-survey-api#readme",
   "dependencies": {
+    "aws-sdk": "^2.405.0",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "formidable": "^1.2.1",
     "fs": "0.0.1-security",
     "jsonexport": "^2.4.1",
     "jsonwebtoken": "^8.4.0",
     "morgan": "^1.9.1",
+    "multer": "^1.4.1",
     "mysql": "^2.16.0",
     "nodemailer": "^5.1.1",
     "nodemon": "^1.18.9",
-    "pg-promise": "^8.5.5"
+    "pg-promise": "^8.5.5",
+    "uuid": "^3.3.2"
   }
 }
