@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   res.append("Access-Control-Allow-Origin", ["*"]);
   res.append("Access-Control-Allow-Methods", ["*"]);
@@ -15,4 +15,6 @@ app.use((req, res, next) => {
 const route = require("./api/routes/route");
 route(app);
 
-app.listen(process.env.APP_PORT, () => console.log(`Listening on port ${process.env.APP_PORT}`));
+app.listen(process.env.APP_PORT, () =>
+  console.log(`Listening on port ${process.env.APP_PORT}`)
+);

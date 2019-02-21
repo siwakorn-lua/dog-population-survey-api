@@ -1,5 +1,13 @@
 const pool = require("../../pool");
 const bcrypt = require("bcryptjs");
+const AWS = require("aws-sdk");
+const fs = require("fs");
+
+// Set-up s3
+const credentials = new AWS.SharedIniFileCredentials({ profile: "default" });
+AWS.config.credentials = credentials;
+AWS.config.update({ region: "ap-southeast-1" });
+s3 = new AWS.S3();
 
 exports.updateUser = function(data, callback) {
   pool.getConnection(function(err, connection) {
@@ -59,10 +67,33 @@ exports.getUserByUsername = function(data, callback) {
   });
 };
 
-exports.register = function(data, callback) {
+exports.register = function(data, files, callback) {
+  // upload user picture into s3 bucket
+  var imageUrl = null;
+  if (files.profilePicture) {
+    var keyName = data.email + "/user-profile.jpg";
+    var fileStream = fs.createReadStream(files.profilePicture.path);
+    fileStream.on("error", function(err) {
+      console.log("File Error", err);
+      callback(err, "Your file is invalid");
+    });
+    var params = {
+      Body: fileStream,
+      Bucket: process.env.BUCKET_NAME,
+      Key: keyName
+    };
+    s3.upload(params, (err, imgData) => {
+      if (err) {
+        console.log(err);
+        callback(err, null);
+      }
+      imageUrl = imgData.Location;
+    });
+  }
+  // insert user data into database
   let now = new Date();
   pool.getConnection(function(err, connection) {
-    if(err) callback(err,null)
+    if (err) callback(err, null);
     connection.query(
       "select * from user where email = ?",
       [data.email],
@@ -78,12 +109,12 @@ exports.register = function(data, callback) {
               data.password,
               data.firstName,
               data.lastName,
-              data.address,
-              data.subdistrict,
-              data.district,
-              data.province,
-              data.phone,
-              data.profilePicture,
+              data.address ? data.address : null,
+              data.subdistrict ? data.subdistrict : null,
+              data.district ? data.district : null,
+              data.province ? data.province : null,
+              data.phone ? data.phone : null,
+              imageUrl ? imageUrl : null,
               data.forgotQuestion,
               data.forgotAnswer,
               now.getFullYear() +

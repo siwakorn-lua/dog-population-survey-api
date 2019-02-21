@@ -13,14 +13,14 @@ exports.verifyToken = function(req, res, next) {
           if (data.length != 0) {
             return next();
           } else {
-            res.status(401).send("ชื่อผู้ใช้ไม่มีอยู่จริง");
+            res.status(401).send({ message: "ชื่อผู้ใช้ไม่มีอยู่จริง" });
           }
         });
       }
     } else {
-      res.status(401).send("Invalid token");
+      res.status(401).send({ message: "Invalid token" });
     }
   } else {
-    res.status(401).send("Cannot get header");
+    res.status(401).send({ message: "Cannot get header" });
   }
 };

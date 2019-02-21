@@ -1,5 +1,8 @@
 const reportModel = require("../model/reportModel");
 const authController = require("../controller/authController");
+const jsonexport = require("jsonexport");
+const fs = require("fs");
+const nodemailer = require("nodemailer");
 
 exports.countAllDog = function(req, res) {
   authController.verifyToken(req, res, function() {
@@ -133,59 +136,56 @@ exports.countDogByProvince = function(req, res) {
   });
 };
 
-var jsonexport = require('jsonexport');
-var fs = require('fs');
-const nodemailer = require('nodemailer');
-const config = require("../../config");
-
 exports.reportCsv = function(req, res) {
-  authController.verifyToken(req, res, function() {  
+  authController.verifyToken(req, res, function() {
     const transporter = nodemailer.createTransport({
-      service: 'hotmail',
+      service: "hotmail",
       auth: {
-        user: config.emailuser, // your email
-        pass: config.emailpass // your email password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
     reportModel.reportCsv(req, (error, databack) => {
       if (error) throw error;
-          for(i in databack){
-            databack[i].rabiesFlag = 0;
-          }
-      reportModel.rabies(req,(error,rabies) => {
-        if(error) throw(error);
-          for(i in rabies){
-            databack[rabies[i]].rabiesFlag = 1;
-          }
-      })
-      
-      jsonexport(databack,function(err, csv){
-          if(err) return console.log(err);
-          fs.writeFile("C:/Users/nuch_/Desktop/Doggy/dog-population-survey-api/db/exportAllDog.csv", csv, function(err) {
-            if(err) {
-                return console.log(err);
+      for (i in databack) {
+        databack[i].rabiesFlag = 0;
+      }
+      reportModel.rabies(req, (error, rabies) => {
+        if (error) throw error;
+        for (i in rabies) {
+          databack[rabies[i]].rabiesFlag = 1;
+        }
+      });
+
+      jsonexport(databack, function(err, csv) {
+        if (err) return console.log(err);
+        fs.writeFile(
+          "C:/Users/nuch_/Desktop/Doggy/dog-population-survey-api/db/exportAllDog.csv",
+          csv,
+          function(err) {
+            if (err) {
+              return console.log(err);
             }
-        }); 
-          let mailOptions = {
-            from: '',                // sender
-            to: req.body.email,                // list of receivers
-            subject: 'Dog Info .Csv',              // Mail subject
-            html: '<b>Do you receive this mail?</b>',   // HTML body
-            attachments: [{   
-              filename: 'test.csv',
+          }
+        );
+        let mailOptions = {
+          from: "", // sender
+          to: req.body.email, // list of receivers
+          subject: "Dog Info .Csv", // Mail subject
+          html: "<b>Do you receive this mail?</b>", // HTML body
+          attachments: [
+            {
+              filename: "test.csv",
               content: csv
-            }],
-          };
-          transporter.sendMail(mailOptions, function (err, info) {
-            if(err)
-              throw(err)
-            else
-              console.log("Sent!!!");
-          });
-          res.json(csv);
-});
-      
+            }
+          ]
+        };
+        transporter.sendMail(mailOptions, function(err, info) {
+          if (err) throw err;
+          else console.log("Sent!!!");
+        });
+        res.json(csv);
+      });
     });
   });
 };
-
