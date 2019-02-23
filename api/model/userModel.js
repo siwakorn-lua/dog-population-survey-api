@@ -50,8 +50,8 @@ exports.getUserByUsername = function(data, callback) {
     if (err) callback(err, null); // not connected!
     // Use the connection
     connection.query(
-      "SELECT * FROM user where email = ?",
-      [data.email],
+      "SELECT * FROM user where username = ?",
+      [data.username],
       function(error, results, fields) {
         // When done with the connection, release it.
         connection.release();
@@ -103,9 +103,10 @@ exports.register = function(data, files, callback) {
           callback(null, result);
         } else {
           connection.query(
-            "insert into user(email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [
-              data.email,
+              data.username,
+              data.email ? data.email : null,
               data.password,
               data.firstName,
               data.lastName,
