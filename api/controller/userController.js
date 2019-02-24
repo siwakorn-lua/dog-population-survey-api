@@ -87,9 +87,22 @@ exports.retrieveUserData = function(req, res) {
 };
 
 exports.forgotPassword = function(req, res) {
-  let data = req.body;
-  userModel.forgotPassword(data, (error, databack) => {
-    if (error) throw error;
-    res.status(200).json(databack);
+  new formidable.IncomingForm().parse(req, (err, fields, files) => {
+    if (err) {
+      res.status(400).send({ message: "Your request is bad" });
+    }
+    let data = fields;
+    userModel.forgotPassword(data, files, (error, databack) => {
+      if (error) {
+        res.status(400).send({ error: error });
+      } else {
+        res
+          .status(200)
+          .send({
+            message:
+              "Successfully changed your password, please proceed to login"
+          });
+      }
+    });
   });
 };

@@ -144,29 +144,35 @@ exports.register = function(data, files, callback) {
 };
 
 // Assume there will be a question for those who forgot their password
-exports.forgotPassword = function(data, callback) {
+exports.forgotPassword = function(data, files, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
+    console.log(data);
     connection.query(
-      "select questionTopic,questionAnswer from user where email = ?",
-      [data.email],
+      "select forgotQuestion,forgotAnswer from user where username = ?",
+      [data.username],
       function(err, result, field) {
         if (err) callback(err, null);
-        if (
-          data.questionTopic == result[0].questionTopic &&
-          data.questionAnswer == result[0].questionAnswer
-        ) {
-          let salt = bcrypt.genSaltSync(10);
-          let encryptedPassword = bcrypt.hashSync(data.password, salt);
-          connection.query(
-            "update user set password = ? where email = ?",
-            [encryptedPassword, data.email],
-            function(err, results, fields) {
-              if (err) callback(err, null);
-              connection.release();
-              callback(null, results);
-            }
-          );
+        if (result.length == 0) callback("Username cannot be found.", null);
+        else {
+          if (
+            data.forgotQuestion == result[0].forgotQuestion &&
+            data.forgotAnswer == result[0].forgotAnswer
+          ) {
+            let salt = bcrypt.genSaltSync(10);
+            let encryptedPassword = bcrypt.hashSync(data.password, salt);
+            connection.query(
+              "update user set password = ? where username = ?",
+              [encryptedPassword, data.username],
+              function(err, results, fields) {
+                if (err) callback(err, null);
+                connection.release();
+                callback(null, results);
+              }
+            );
+          } else {
+            callback("Your security question or answer is wrong.", null);
+          }
         }
       }
     );
