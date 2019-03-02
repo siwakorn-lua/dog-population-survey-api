@@ -96,12 +96,9 @@ exports.forgotPassword = function(req, res) {
       if (error) {
         res.status(400).send({ error: error });
       } else {
-        res
-          .status(200)
-          .send({
-            message:
-              "Successfully changed your password, please proceed to login"
-          });
+        res.status(200).send({
+          message: "Successfully changed your password, please proceed to login"
+        });
       }
     });
   });
