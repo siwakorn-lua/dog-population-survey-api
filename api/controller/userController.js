@@ -13,6 +13,7 @@ exports.register = function(req, res) {
     }
     const salt = bcrypt.genSaltSync(10);
     let data = fields;
+    console.log(data.password)
     data.password = bcrypt.hashSync(data.password, salt);
     userModel.register(data, files, (error, databack) => {
       if (error) {

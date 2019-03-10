@@ -95,15 +95,15 @@ exports.register = function(data, files, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
     connection.query(
-      "select * from user where email = ?",
-      [data.email],
+      "select * from user where username = ?",
+      [data.username],
       function(err, result, fields) {
         if (err) throw err;
         else if (result.length != 0) {
           callback(null, result);
         } else {
           connection.query(
-            "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             [
               data.username,
               data.email ? data.email : null,
@@ -118,6 +118,18 @@ exports.register = function(data, files, callback) {
               imageUrl ? imageUrl : null,
               data.forgotQuestion,
               data.forgotAnswer,
+              now.getFullYear() +
+                "/" +
+                now.getMonth() +
+                "/" +
+                "/" +
+                now.getDate() +
+                " " +
+                now.getHours() +
+                ":" +
+                now.getMinutes() +
+                ":" +
+                now.getSeconds(),
               now.getFullYear() +
                 "/" +
                 now.getMonth() +
@@ -147,7 +159,6 @@ exports.register = function(data, files, callback) {
 exports.forgotPassword = function(data, files, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
-    console.log(data);
     connection.query(
       "select forgotQuestion,forgotAnswer from user where username = ?",
       [data.username],
