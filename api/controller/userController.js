@@ -13,7 +13,6 @@ exports.register = function(req, res) {
     }
     const salt = bcrypt.genSaltSync(10);
     let data = fields;
-    console.log(data.password)
     data.password = bcrypt.hashSync(data.password, salt);
     userModel.register(data, files, (error, databack) => {
       if (error) {
@@ -35,7 +34,6 @@ exports.register = function(req, res) {
 exports.login = function(req, res) {
   userModel.getUserByUsername(req.body, (error, data) => {
     if (error) throw error;
-
     if (data.length == 0) {
       res.status(401).send({ message: "Your username or password are wrong" });
     } else {
@@ -53,7 +51,7 @@ exports.login = function(req, res) {
             { username: user.username },
             process.env.SECRET
           );
-          res.json({ token: token });
+          res.json({ token: token, ...user, password: null });
         } else {
           res
             .status(401)

@@ -68,10 +68,9 @@ exports.getUserByUsername = function(data, callback) {
 };
 
 exports.register = function(data, files, callback) {
-  // upload user picture into s3 bucket
-  var imageUrl = null;
+  let now = new Date();
   if (files.profilePicture) {
-    var keyName = data.email + "/user-profile.jpg";
+    var keyName = "uploads/" + data.username + "/user-profile.jpg";
     var fileStream = fs.createReadStream(files.profilePicture.path);
     fileStream.on("error", function(err) {
       console.log("File Error", err);
@@ -87,72 +86,131 @@ exports.register = function(data, files, callback) {
         console.log(err);
         callback(err, null);
       }
-      imageUrl = imgData.Location;
+      pool.getConnection(function(err, connection) {
+        if (err) callback(err, null);
+        connection.query(
+          "select * from user where username = ?",
+          [data.username],
+          function(err, result, fields) {
+            if (err) throw err;
+            else if (result.length != 0) {
+              callback(null, result);
+            } else {
+              connection.query(
+                "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                [
+                  data.username,
+                  data.email ? data.email : null,
+                  data.password,
+                  data.firstName,
+                  data.lastName,
+                  data.address ? data.address : null,
+                  data.subdistrict ? data.subdistrict : null,
+                  data.district ? data.district : null,
+                  data.province ? data.province : null,
+                  data.phone ? data.phone : null,
+                  imgData.Location,
+                  data.forgotQuestion,
+                  data.forgotAnswer,
+                  now.getFullYear() +
+                    "/" +
+                    now.getMonth() +
+                    "/" +
+                    "/" +
+                    now.getDate() +
+                    " " +
+                    now.getHours() +
+                    ":" +
+                    now.getMinutes() +
+                    ":" +
+                    now.getSeconds(),
+                  now.getFullYear() +
+                    "/" +
+                    now.getMonth() +
+                    "/" +
+                    "/" +
+                    now.getDate() +
+                    " " +
+                    now.getHours() +
+                    ":" +
+                    now.getMinutes() +
+                    ":" +
+                    now.getSeconds()
+                ],
+                function(err, result, fields) {
+                  if (err) callback(err, null);
+                  connection.release();
+                  callback(null, result);
+                }
+              );
+            }
+          }
+        );
+      });
+    });
+  } else {
+    pool.getConnection(function(err, connection) {
+      if (err) callback(err, null);
+      connection.query(
+        "select * from user where username = ?",
+        [data.username],
+        function(err, result, fields) {
+          if (err) throw err;
+          else if (result.length != 0) {
+            callback(null, result);
+          } else {
+            connection.query(
+              "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+              [
+                data.username,
+                data.email ? data.email : null,
+                data.password,
+                data.firstName,
+                data.lastName,
+                data.address ? data.address : null,
+                data.subdistrict ? data.subdistrict : null,
+                data.district ? data.district : null,
+                data.province ? data.province : null,
+                data.phone ? data.phone : null,
+                null,
+                data.forgotQuestion,
+                data.forgotAnswer,
+                now.getFullYear() +
+                  "/" +
+                  now.getMonth() +
+                  "/" +
+                  "/" +
+                  now.getDate() +
+                  " " +
+                  now.getHours() +
+                  ":" +
+                  now.getMinutes() +
+                  ":" +
+                  now.getSeconds(),
+                now.getFullYear() +
+                  "/" +
+                  now.getMonth() +
+                  "/" +
+                  "/" +
+                  now.getDate() +
+                  " " +
+                  now.getHours() +
+                  ":" +
+                  now.getMinutes() +
+                  ":" +
+                  now.getSeconds()
+              ],
+              function(err, result, fields) {
+                if (err) callback(err, null);
+                connection.release();
+                callback(null, result);
+              }
+            );
+          }
+        }
+      );
     });
   }
-  // insert user data into database
-  let now = new Date();
-  pool.getConnection(function(err, connection) {
-    if (err) callback(err, null);
-    connection.query(
-      "select * from user where username = ?",
-      [data.username],
-      function(err, result, fields) {
-        if (err) throw err;
-        else if (result.length != 0) {
-          callback(null, result);
-        } else {
-          connection.query(
-            "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            [
-              data.username,
-              data.email ? data.email : null,
-              data.password,
-              data.firstName,
-              data.lastName,
-              data.address ? data.address : null,
-              data.subdistrict ? data.subdistrict : null,
-              data.district ? data.district : null,
-              data.province ? data.province : null,
-              data.phone ? data.phone : null,
-              imageUrl ? imageUrl : null,
-              data.forgotQuestion,
-              data.forgotAnswer,
-              now.getFullYear() +
-                "/" +
-                now.getMonth() +
-                "/" +
-                "/" +
-                now.getDate() +
-                " " +
-                now.getHours() +
-                ":" +
-                now.getMinutes() +
-                ":" +
-                now.getSeconds(),
-              now.getFullYear() +
-                "/" +
-                now.getMonth() +
-                "/" +
-                "/" +
-                now.getDate() +
-                " " +
-                now.getHours() +
-                ":" +
-                now.getMinutes() +
-                ":" +
-                now.getSeconds()
-            ],
-            function(err, result, fields) {
-              if (err) callback(err, null);
-              connection.release();
-              callback(null, result);
-            }
-          );
-        }
-      }
-    );
-  });
 };
 
 // Assume there will be a question for those who forgot their password
