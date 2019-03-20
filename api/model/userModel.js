@@ -79,7 +79,8 @@ exports.register = function(data, files, callback) {
     var params = {
       Body: fileStream,
       Bucket: process.env.BUCKET_NAME,
-      Key: keyName
+      Key: keyName,
+      ACL: "public-read"
     };
     s3.upload(params, (err, imgData) => {
       if (err) {
