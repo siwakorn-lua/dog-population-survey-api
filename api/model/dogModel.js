@@ -3,39 +3,33 @@ const pool = require("../../pool");
 exports.addDog = function(data, callback) {
   let now = new Date();
   pool.getConnection(function(err, connection) {
-    if (err) callback(err, null); // not connected!
-    // Use the connection
+    if (err) callback(err, null);
     connection.query(
-      "insert into dog(dogName,dogType,age,ageRange,birthDate,breed,gender,color,sterilized,address,subdistrict,district,province,gps,remark,owner,submitDate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "insert into dog(dogType,gender,color,name,breed,age,ageRange,address,subdistrict,district,province,latitude,longitude,registerDate,latestUpdate,ownerID) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       [
-        data.dogName,
         data.dogType,
-        data.age,
-        data.ageRange,
-        data.birthDate,
-        data.breed,
         data.gender,
-        data.color,
-        data.sterilized,
+        data.color ? data.color : null,
+        data.name ? data.name : null,
+        data.breed ? data.breed : null,
+        data.age ? data.age : null,
+        data.ageRange,
         data.address,
         data.subdistrict,
         data.district,
         data.province,
-        data.gps,
-        data.remark,
-        data.username,
-        now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay()
+        data.latitude,
+        data.longitude,
+        now,
+        now,
+        data.ownerID
       ],
       function(error, results, fields) {
-        // When done with the connection, release it.
         connection.release();
-
-        // Handle error after the release.
         if (error) callback(error, null);
         else {
           callback(null, results);
         }
-        // Don't use the connection here, it has been returned to the pool.
       }
     );
   });
