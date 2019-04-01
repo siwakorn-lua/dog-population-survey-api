@@ -37,43 +37,35 @@ exports.addDog = function(data, callback) {
 
 exports.updateDog = function(data, callback) {
   pool.getConnection(function(err, connection) {
-    if (err) callback(err, null); // not connected!
+    if (err) callback(err, null);
     let now = new Date();
-    // Use the connection
     connection.query(
-      "update dog set dogName = ?, dogType = ?, age = ?, ageRange = ?, birthDate = ?, breed = ?," +
-        " gender = ?, color = ?, sterilized = ?, address = ?, subdistrict = ?, district = ?," +
-        " province = ?, gps = ?, remark = ?, submitDate = ? where dogID = ?",
+      "update dog set dogType = ?, gender = ?, color = ?, name = ?, breed = ?," +
+        " age = ?, ageRange = ?, address = ?, subdistrict = ?, district = ?," +
+        " province = ?, latitude = ?, longitude = ?, latestUpdate = ? where dogID = ?",
       [
-        data.dogName,
         data.dogType,
-        data.age,
-        data.ageRange,
-        data.birthDate,
-        data.breed,
         data.gender,
-        data.color,
-        data.sterilized,
+        data.color ? data.color : null,
+        data.name ? data.name : null,
+        data.breed ? data.breed : null,
+        data.age ? data.age : null,
+        data.ageRange,
         data.address,
         data.subdistrict,
         data.district,
         data.province,
-        data.gps,
-        data.remark,
-        now.getFullYear() + "-" + now.getMonth() + "-" + now.getDay(),
+        data.latitude,
+        data.longitude,
+        now,
         data.dogID
       ],
       function(error, results, fields) {
-        // When done with the connection, release it.
         connection.release();
-
-        // Handle error after the release.
         if (error) callback(error, null);
         else {
           callback(null, results);
         }
-
-        // Don't use the connection here, it has been returned to the pool.
       }
     );
   });
