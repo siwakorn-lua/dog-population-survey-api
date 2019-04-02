@@ -17,5 +17,6 @@ module.exports = function(app) {
   // need authentication
   app.route("/report").post(reportController.countAllDog);
   app.route("/report/:province").post(reportController.countDogByProvince);
-  app.route("/report/csv").post(reportController.reportCsv);
+  app.route("/reportregion").post(reportController.countDogByRegion);
+  app.route("/reportcsv").post(reportController.reportCsv);
 };
