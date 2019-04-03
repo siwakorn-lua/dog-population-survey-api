@@ -70,3 +70,35 @@ exports.updateDog = function(data, callback) {
     );
   });
 };
+
+exports.addDogInformation = function(data, callback) {
+  console.log("inserting data ...");
+  pool.getConnection(function(err, connection) {
+    if (err) callback(err, null);
+    let now = new Date();
+    connection.query(
+      "insert into dog_information(ownerID, dogID, submitDate, dogStatus, ageRange, age, pregnant, childNumber, deathRemark, missingDate, sterilized, sterilizedDate) values (?,?,?,?,?,?,?,?,?,?,?,?)",
+      [
+        data.ownerID,
+        data.dogID,
+        now,
+        data.dogStatus,
+        data.ageRange,
+        data.age ? data.age : null,
+        data.pregnant ? data.pregnant : null,
+        data.childNumber ? data.childNumber : null,
+        data.deathRemark ? data.deathRemark : null,
+        data.missingDate ? data.missingDate : null,
+        data.sterilized ? data.sterilized : null,
+        data.sterilizedDate ? data.sterilizedDate : null
+      ],
+      function(err, results, fields) {
+        connection.release();
+        if (err) callback(err, null);
+        else {
+          callback(null, results);
+        }
+      }
+    );
+  });
+};
