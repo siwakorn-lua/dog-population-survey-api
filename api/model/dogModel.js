@@ -1,4 +1,5 @@
 const pool = require("../../pool");
+const moment = require("moment");
 
 exports.addDog = function(data, callback) {
   let now = new Date();
@@ -72,14 +73,12 @@ exports.updateDog = function(data, callback) {
 };
 
 exports.addDogInformation = function(data, callback) {
-  console.log("inserting data ...");
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
     let now = new Date();
     connection.query(
-      "insert into dog_information(ownerID, dogID, submitDate, dogStatus, ageRange, age, pregnant, childNumber, deathRemark, missingDate, sterilized, sterilizedDate) values (?,?,?,?,?,?,?,?,?,?,?,?)",
+      "insert into dog_information(dogID, submitDate, dogStatus, ageRange, age, pregnant, childNumber, deathRemark, missingDate, sterilized, sterilizedDate) values (?,?,?,?,?,?,?,?,?,?,?)",
       [
-        data.ownerID,
         data.dogID,
         now,
         data.dogStatus,
@@ -88,9 +87,30 @@ exports.addDogInformation = function(data, callback) {
         data.pregnant ? data.pregnant : null,
         data.childNumber ? data.childNumber : null,
         data.deathRemark ? data.deathRemark : null,
-        data.missingDate ? data.missingDate : null,
+        data.missingDate ?  moment(data.missingDate,"DD/MM/YYYY").format("YYYYMMDD") : null,
         data.sterilized ? data.sterilized : null,
-        data.sterilizedDate ? data.sterilizedDate : null
+        data.sterilizedDate ?  moment(data.sterilizedDate,"DD/MM/YYYY").format("YYYYMMDD") : null
+      ],
+      function(err, results, fields) {
+        connection.release();
+        if (err) callback(err, null);
+        else {
+          callback(null, results);
+        }
+      }
+    );
+  });
+};
+
+exports.addDogVaccine = function(data, callback) {
+  pool.getConnection(function(err, connection) {
+    if (err) callback(err, null);
+    connection.query(
+      "insert into dog_vaccine(dogID,vaccineName,injectedDate) values (?,?,?)",
+      [
+        data.dogID,
+        data.vaccineName,
+        moment(data.injectedDate,"DD/MM/YYYY").format("YYYYMMDD")
       ],
       function(err, results, fields) {
         connection.release();
