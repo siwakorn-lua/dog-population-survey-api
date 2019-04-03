@@ -268,16 +268,7 @@ exports.reportCsv = function(req, res) {
     });
     reportModel.reportCsv(req, (error, databack) => {
       if (error) throw error;
-      for (i in databack) {
-        databack[i].rabiesFlag = 0;
-      }
-      reportModel.rabies(req, (error, rabies) => {
-        if (error) throw error;
-        for (i in rabies) {
-          databack[rabies[i]].rabiesFlag = 1;
-        }
-      });
-
+      
       jsonexport(databack, function(err, csv) {
         if (err) return console.log(err);
         fs.writeFile(

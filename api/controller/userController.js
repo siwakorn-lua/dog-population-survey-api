@@ -32,6 +32,7 @@ exports.register = function(req, res) {
 };
 
 exports.login = function(req, res) {
+  
   userModel.getUserByUsername(req.body, (error, data) => {
     if (error) throw error;
     if (data.length == 0) {
