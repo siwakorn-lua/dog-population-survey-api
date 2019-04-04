@@ -87,9 +87,13 @@ exports.addDogInformation = function(data, callback) {
         data.pregnant ? data.pregnant : null,
         data.childNumber ? data.childNumber : null,
         data.deathRemark ? data.deathRemark : null,
-        data.missingDate ?  moment(data.missingDate,"DD/MM/YYYY").format("YYYYMMDD") : null,
+        data.missingDate
+          ? moment(data.missingDate, "DD/MM/YYYY").format("YYYYMMDD")
+          : null,
         data.sterilized ? data.sterilized : null,
-        data.sterilizedDate ?  moment(data.sterilizedDate,"DD/MM/YYYY").format("YYYYMMDD") : null
+        data.sterilizedDate
+          ? moment(data.sterilizedDate, "DD/MM/YYYY").format("YYYYMMDD")
+          : null
       ],
       function(err, results, fields) {
         connection.release();
@@ -110,13 +114,51 @@ exports.addDogVaccine = function(data, callback) {
       [
         data.dogID,
         data.vaccineName,
-        moment(data.injectedDate,"DD/MM/YYYY").format("YYYYMMDD")
+        moment(data.injectedDate, "DD/MM/YYYY").format("YYYYMMDD")
       ],
       function(err, results, fields) {
         connection.release();
         if (err) callback(err, null);
         else {
           callback(null, results);
+        }
+      }
+    );
+  });
+};
+
+exports.addDogImage = function(data, callback) {
+  pool.getConnection(function(err, connection) {
+    if (err) callback(err, null);
+    connection.query(
+      "select * from dog_picture where dogID = ? and side = ?",
+      [data.dogID, data.side],
+      function(error, result, fields) {
+        if (error) callback(error, null);
+        else {
+          if (result.length != 0) {
+            connection.query(
+              "update dog_picture set picture = ? where dogID = ? and side = ?",
+              [data.imageLocation, data.dogID, data.side],
+              function(error, result, fields) {
+                if (error) callback(error, null);
+                else {
+                  callback(null, result);
+                }
+              }
+            );
+          } else {
+            connection.query(
+              "insert into dog_picture(dogID,side,picture) values (?,?,?)",
+              [data.dogID, data.side, data.imageLocation],
+              function(error, result, fields) {
+                if (error) callback(error, null);
+                else {
+                  callback(null, result);
+                }
+              }
+            );
+          }
         }
       }
     );

@@ -14,6 +14,7 @@ module.exports = function(app) {
   app.route("/dog/update").post(dogController.updateDog);
   app.route("/dog/information/add").post(dogController.addDogInformation);
   app.route("/dog/vaccine/add").post(dogController.addDogVaccine);
+  app.route("/dog/image/add").post(dogController.addDogImage);
 
   const reportController = require("../controller/reportController");
   // need authentication
