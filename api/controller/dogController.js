@@ -44,7 +44,14 @@ exports.updateDog = function(req, res) {
 exports.addDogInformation = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.addDogInformation(req.body, (error, databack) => {
-      if (error) console.log(error);
+      if (error){
+         console.log(error);
+         res.status(400).json({
+          status: "Fail",
+          message: "Your dog information hasn't been added.",
+          data: databack
+        });
+        }
       if (databack) {
         console.log(databack);
         res.status(200).json({
@@ -60,7 +67,13 @@ exports.addDogInformation = function(req, res) {
 exports.addDogVaccine = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.addDogVaccine(req.body, (error, databack) => {
-      if (error) console.log(error);
+      if (error){
+        console.log(error);
+        res.status(400).json({
+          status: "Fail",
+          message: "Your dog vaccine hasn't been added.",
+        })
+      }
       if (databack) {
         console.log(databack);
         res.status(200).json({
