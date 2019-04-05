@@ -141,6 +141,7 @@ exports.addDogImage = function(data, callback) {
               "update dog_picture set picture = ? where dogID = ? and side = ?",
               [data.imageLocation, data.dogID, data.side],
               function(error, result, fields) {
+                connection.release();
                 if (error) callback(error, null);
                 else {
                   callback(null, result);
@@ -152,6 +153,7 @@ exports.addDogImage = function(data, callback) {
               "insert into dog_picture(dogID,side,picture) values (?,?,?)",
               [data.dogID, data.side, data.imageLocation],
               function(error, result, fields) {
+                connection.release();
                 if (error) callback(error, null);
                 else {
                   callback(null, result);
@@ -162,5 +164,66 @@ exports.addDogImage = function(data, callback) {
         }
       }
     );
+  });
+};
+
+exports.retrieveDogData = function(data, callback) {
+  pool.getConnection(function(err, connection) {
+    if (err) callback(err, null);
+    else {
+      connection.query(
+        "select * from dog where ownerID = ?",
+        [data.ownerID],
+        function(error, results, fields) {
+          if (error) callback(error, null);
+          else {
+            var databack = {
+              dogs: results
+            };
+            connection.query(
+              "select * from dog_information i1 join (select s1.dogID, maxSubmitDate from dog d1 join (SELECT dogID, max(submitDate) as maxSubmitDate FROM doggy.dog_information group by dogID) s1 on d1.dogID = s1.dogID where ownerID = ?) b1 on i1.dogID = b1.dogID and i1.submitDate = b1.maxSubmitDate",
+              [data.ownerID],
+              function(error, results, fields) {
+                if (error) callback(error, null);
+                else {
+                  databack = {
+                    ...databack,
+                    dogInformations: results
+                  };
+                  connection.query(
+                    "select dog_vaccine.dogID, vaccineName, injectedDate from dog join dog_vaccine on dog.dogID = dog_vaccine.dogID where ownerID = ?",
+                    [data.ownerID],
+                    function(error, results, fields) {
+                      if (error) callback(error, null);
+                      else {
+                        databack = {
+                          ...databack,
+                          vaccines: results
+                        };
+                        connection.query(
+                          "select dog_picture.dogID,side,picture from dog join dog_picture on dog.dogID = dog_picture.dogID where ownerID = ?",
+                          [data.ownerID],
+                          function(error, results, fields) {
+                            connection.release();
+                            if (error) callback(error, null);
+                            else {
+                              databack = {
+                                ...databack,
+                                pictures: results
+                              };
+                              callback(null, databack);
+                            }
+                          }
+                        );
+                      }
+                    }
+                  );
+                }
+              }
+            );
+          }
+        }
+      );
+    }
   });
 };

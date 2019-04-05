@@ -159,3 +159,24 @@ exports.addDogImage = function(req, res) {
     }
   });
 };
+
+exports.retrieveDogData = function(req, res){
+  authController.verifyToken(req, res, function() {
+    dogModel.retrieveDogData(req.body, (error, databack) => {
+      if (error){
+        console.log(error);
+        res.status(400).json({
+          status: "Fail",
+          message: "Your dog vaccine hasn't been added.",
+        })
+      }
+      if (databack) {
+        res.status(200).json({
+          status: "Success",
+          message: "Your dog vaccine has been added.",
+          data: databack
+        });
+      }
+    });
+  });
+}
