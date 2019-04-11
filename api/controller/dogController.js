@@ -12,8 +12,16 @@ s3 = new AWS.S3();
 exports.addDog = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.addDog(req.body, (error, databack) => {
-      if (error) console.log(error);
+      if (error) {
+        console.log(error);
+        res.status(400).json({
+          status: "Fail",
+          message: "Your dog hasn't been added.",
+          data: databack
+        });
+      }
       if (databack) {
+        console.log(databack);
         res.status(200).json({
           status: "Success",
           message: "Your dog has been added.",
@@ -28,7 +36,14 @@ exports.updateDog = function(req, res) {
   authController.verifyToken(req, res, function() {
     let data = req.body;
     dogModel.updateDog(data, (error, databack) => {
-      if (error) console.log(error);
+      if (error) {
+        console.log(error);
+        res.status(400).json({
+          status: "Fail",
+          message: "Your dog hasn't been updated.",
+          data: databack
+        });
+      }
       if (databack) {
         console.log(databack);
         res.status(200).json({
@@ -44,14 +59,14 @@ exports.updateDog = function(req, res) {
 exports.addDogInformation = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.addDogInformation(req.body, (error, databack) => {
-      if (error){
-         console.log(error);
-         res.status(400).json({
+      if (error) {
+        console.log(error);
+        res.status(400).json({
           status: "Fail",
           message: "Your dog information hasn't been added.",
           data: databack
         });
-        }
+      }
       if (databack) {
         console.log(databack);
         res.status(200).json({
@@ -67,12 +82,12 @@ exports.addDogInformation = function(req, res) {
 exports.addDogVaccine = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.addDogVaccine(req.body, (error, databack) => {
-      if (error){
+      if (error) {
         console.log(error);
         res.status(400).json({
           status: "Fail",
-          message: "Your dog vaccine hasn't been added.",
-        })
+          message: "Your dog vaccine hasn't been added."
+        });
       }
       if (databack) {
         console.log(databack);
@@ -160,15 +175,15 @@ exports.addDogImage = function(req, res) {
   });
 };
 
-exports.retrieveDogData = function(req, res){
+exports.retrieveDogData = function(req, res) {
   authController.verifyToken(req, res, function() {
     dogModel.retrieveDogData(req.body, (error, databack) => {
-      if (error){
+      if (error) {
         console.log(error);
         res.status(400).json({
           status: "Fail",
-          message: "Your dog vaccine hasn't been added.",
-        })
+          message: "Your dog vaccine hasn't been added."
+        });
       }
       if (databack) {
         res.status(200).json({
@@ -179,4 +194,4 @@ exports.retrieveDogData = function(req, res){
       }
     });
   });
-}
+};
