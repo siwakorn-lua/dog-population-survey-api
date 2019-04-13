@@ -117,8 +117,7 @@ exports.addDogImage = function(req, res) {
         body: fields
       };
       authController.verifyToken(authData, res, function() {
-        var keyName =
-          "uploads/" + fields.username + "/dog-image-" + fields.side + ".jpg";
+        var keyName = "uploads/" + fields.username + "/" + fields.dogID + "/dog-image-" + fields.side + ".jpg";
         var fileStream = fs.createReadStream(files.dogImage.path);
         fileStream.on("error", function(err) {
           console.log("File Error", err);
