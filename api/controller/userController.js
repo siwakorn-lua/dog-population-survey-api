@@ -32,7 +32,6 @@ exports.register = function(req, res) {
 };
 
 exports.login = function(req, res) {
-  
   userModel.getUserByUsername(req.body, (error, data) => {
     if (error) throw error;
     if (data.length == 0) {
@@ -64,12 +63,36 @@ exports.login = function(req, res) {
 };
 
 exports.updateUser = function(req, res) {
-  authController.verifyToken(req, res, function() {
-    let data = req.body;
-    userModel.updateUser(data, (error, databack) => {
-      if (error) throw error;
-      res.status(200).json(databack);
-    });
+  new formidable.IncomingForm().parse(req, (err, fields, files) => {
+    if (err) {
+      console.log(err);
+      res.status(400).json({
+        status: "Fail",
+        message: "Your user information has not been added."
+      });
+    } else {
+      var authData = {
+        headers: req.headers,
+        body: fields
+      };
+      authController.verifyToken(authData, res, function() {
+        const salt = bcrypt.genSaltSync(10);
+        let data = fields;
+        data.password = bcrypt.hashSync(data.password, salt);
+        userModel.updateUser(data, files, function(error, databack) {
+          if (error) {
+            console.log(err);
+          } else {
+            console.log(err);
+            res.status(200).json({
+              status: "Success",
+              message: "Your user information has not been added.",
+              data: databack
+            });
+          }
+        });
+      });
+    }
   });
 };
 

@@ -9,42 +9,6 @@ AWS.config.credentials = credentials;
 AWS.config.update({ region: "ap-southeast-1" });
 s3 = new AWS.S3();
 
-exports.updateUser = function(data, callback) {
-  pool.getConnection(function(err, connection) {
-    if (err) callback(err, null); // not connected!
-
-    // Use the connection
-    connection.query(
-      "update user set firstName = ?, lastName = ?, address = ?, subdistrict = ?," +
-        " district = ?, province = ?, phone = ?, lineID = ?, facebookID = ?, googleID = ? where email = ?",
-      [
-        data.firstName,
-        data.lastName,
-        data.address,
-        data.subdistrict,
-        data.district,
-        data.province,
-        data.phone,
-        data.lineID,
-        data.facebookID,
-        data.googleID,
-        data.email
-      ],
-      function(error, results, fields) {
-        // When done with the connection, release it.
-        connection.release();
-        // Handle error after the release.
-        if (error) callback(error, null);
-        else {
-          callback(null, results);
-        }
-
-        // Don't use the connection here, it has been returned to the pool.
-      }
-    );
-  });
-};
-
 exports.getUserByUsername = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null); // not connected!
@@ -207,6 +171,112 @@ exports.register = function(data, files, callback) {
                 callback(null, result);
               }
             );
+          }
+        }
+      );
+    });
+  }
+};
+
+exports.updateUser = function(data, files, callback) {
+  let now = new Date();
+  if (files.profilePicture) {
+    var keyName = "uploads/" + data.username + "/user-profile.jpg";
+    var fileStream = fs.createReadStream(files.profilePicture.path);
+    fileStream.on("error", function(err) {
+      console.log("File Error", err);
+      callback(err, "Your file is invalid");
+    });
+    var params = {
+      Body: fileStream,
+      Bucket: process.env.BUCKET_NAME,
+      Key: keyName,
+      ACL: "public-read"
+    };
+    s3.upload(params, (err, imgData) => {
+      if (err) {
+        console.log(err);
+        callback(err, null);
+      }
+      pool.getConnection(function(err, connection) {
+        if (err) callback(err, null);
+        connection.query(
+          "update user set firstName = ?, lastName = ?, address = ?, subdistrict = ?, district = ?, province = ?, phone = ?, email = ?, profilePicture = ?, forgotQuestion = ?, forgotAnswer = ?, latestUpdate = ? where username = ?",
+          [
+            data.firstName,
+            data.lastName,
+            data.address ? data.address : null,
+            data.subdistrict ? data.subdistrict : null,
+            data.district ? data.district : null,
+            data.province ? data.province : null,
+            data.phone ? data.phone : null,
+            data.email ? data.email : null,
+            imgData.Location,
+            data.forgotQuestion,
+            data.forgotAnswer,
+            now.getFullYear() +
+              "/" +
+              now.getMonth() +
+              "/" +
+              "/" +
+              now.getDate() +
+              " " +
+              now.getHours() +
+              ":" +
+              now.getMinutes() +
+              ":" +
+              now.getSeconds(),
+            data.username
+          ],
+          function(err, result, fields) {
+            connection.release();
+            fs.unlink(files.profilePicture.path, err => {
+              if (err) console.log(err);
+            });
+            if (err) callback(err, null);
+            else {
+              callback(null, result);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    pool.getConnection(function(err, connection) {
+      if (err) callback(err, null);
+      connection.query(
+        "update user set firstName = ?, lastName = ?, address = ?, subdistrict = ?, district = ?, province = ?, phone = ?, email = ?, profilePicture = ?, forgotQuestion = ?, forgotAnswer = ?, latestUpdate = ? where username = ?",
+        [
+          data.firstName,
+          data.lastName,
+          data.address ? data.address : null,
+          data.subdistrict ? data.subdistrict : null,
+          data.district ? data.district : null,
+          data.province ? data.province : null,
+          data.phone ? data.phone : null,
+          data.email ? data.email : null,
+          null,
+          data.forgotQuestion,
+          data.forgotAnswer,
+          now.getFullYear() +
+            "/" +
+            now.getMonth() +
+            "/" +
+            "/" +
+            now.getDate() +
+            " " +
+            now.getHours() +
+            ":" +
+            now.getMinutes() +
+            ":" +
+            now.getSeconds(),
+          data.username
+        ],
+        function(err, result, fields) {
+          connection.release();
+          if (err) callback(err, null);
+          else {
+            callback(null, result);
           }
         }
       );
