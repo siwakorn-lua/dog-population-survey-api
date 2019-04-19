@@ -96,16 +96,26 @@ exports.updateUser = function(req, res) {
   });
 };
 
-exports.retrieveUserData = function(req, res) {
-  authController.verifyToken(req, res, function() {
-    userModel.getUserByUsername(req.body, (err, databack) => {
-      if (err) {
-        console.log(err);
-        res.status(401).json(err);
+exports.checkUsername = function(req, res) {
+  userModel.getUserByUsername(req.body, (error, databack) => {
+    if (error)
+      res
+        .status(400)
+        .json({
+          status: "Fail",
+          message: "There is an error. Please try again next time."
+        });
+    else {
+      if (databack.length != 0) {
+        res
+          .status(400)
+          .json({ status: "Fail", message: "Already have this username." });
       } else {
-        res.status(200).json(databack);
+        res
+          .status(200)
+          .json({ status: "Success", message: "This username can be used." });
       }
-    });
+    }
   });
 };
 

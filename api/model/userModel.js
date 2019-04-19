@@ -11,21 +11,16 @@ s3 = new AWS.S3();
 
 exports.getUserByUsername = function(data, callback) {
   pool.getConnection(function(err, connection) {
-    if (err) callback(err, null); // not connected!
-    // Use the connection
+    if (err) callback(err, null);
     connection.query(
       "SELECT * FROM user where username = ?",
       [data.username],
       function(error, results, fields) {
-        // When done with the connection, release it.
         connection.release();
-
-        // Handle error after the release.
         if (error) callback(error, null);
         else {
           callback(null, results);
         }
-        // Don't use the connection here, it has been returned to the pool.
       }
     );
   });
@@ -59,7 +54,7 @@ exports.register = function(data, files, callback) {
           function(err, result, fields) {
             if (err) throw err;
             else if (result.length != 0) {
-              callback(null, result);
+              callback("Already have this username.", null);
             } else {
               connection.query(
                 "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -105,6 +100,7 @@ exports.register = function(data, files, callback) {
                 function(err, result, fields) {
                   if (err) callback(err, null);
                   connection.release();
+                  console.log(result);
                   callback(null, result);
                 }
               );
@@ -122,7 +118,7 @@ exports.register = function(data, files, callback) {
         function(err, result, fields) {
           if (err) throw err;
           else if (result.length != 0) {
-            callback(null, result);
+            callback(null, "Already have this username.");
           } else {
             connection.query(
               "insert into user(username,email,password,firstName,lastName,address,subdistrict,district,province,phone,profilePicture,forgotQuestion,forgotAnswer,registerDate,latestUpdate) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
