@@ -259,8 +259,12 @@ exports.countDogByProvince = function(req, res) {
 
 exports.reportCsv = function(req, res) {
   authController.verifyToken(req, res, function() {
+    console.log(req.body.email);
+    var tmp = req.body.email.split("@");
+    var sv = tmp[1].split(".");
+    console.log(sv[0]);
     const transporter = nodemailer.createTransport({
-      service: "hotmail",
+      service: sv[0],
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD
