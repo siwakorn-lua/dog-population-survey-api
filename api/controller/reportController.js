@@ -275,23 +275,15 @@ exports.reportCsv = function(req, res) {
       
       jsonexport(databack, function(err, csv) {
         if (err) return console.log(err);
-        fs.writeFile(
-          "C:/Users/nuch_/Desktop/Doggy/dog-population-survey-api/db/exportAllDog.csv",
-          csv,
-          function(err) {
-            if (err) {
-              return console.log(err);
-            }
-          }
-        );
+        
         let mailOptions = {
-          from: "JJ", // sender
+          from: "Doggy Application", // sender
           to: req.body.email, // list of receivers
           subject: "Dog Info .Csv", // Mail subject
-          html: "<b>Do you receive this mail?</b>", // HTML body
+          html: "<b>Take a look</b>", // HTML body
           attachments: [
             {
-              filename: "test.csv",
+              filename: "DogsInfomation.csv",
               content: csv
             }
           ]

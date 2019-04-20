@@ -1,5 +1,6 @@
 module.exports = function(app) {
   const userController = require("../controller/userController");
+
   // do not need authentication
   app.route("/login").post(userController.login);
   app.route("/register").post(userController.register);
