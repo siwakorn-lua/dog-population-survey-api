@@ -6,7 +6,7 @@ exports.addDog = function(data, callback) {
   pool.getConnection(function(err, connection) {
     if (err) callback(err, null);
     connection.query(
-      "insert into dog(dogType,gender,color,name,breed,age,ageRange,address,subdistrict,district,province,latitude,longitude,registerDate,latestUpdate,ownerID) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+      "insert into dog(dogType,gender,color,name,breed,age,ageRange,address,subdistrict,district,province,latitude,longitude,registerDate,latestUpdate,isDelete,ownerID) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
       [
         data.dogType,
         data.gender,
@@ -23,6 +23,7 @@ exports.addDog = function(data, callback) {
         data.longitude,
         now,
         now,
+        data.isDelete,
         data.ownerID
       ],
       function(error, results, fields) {
@@ -43,7 +44,7 @@ exports.updateDog = function(data, callback) {
     connection.query(
       "update dog set dogType = ?, gender = ?, color = ?, name = ?, breed = ?," +
         " age = ?, ageRange = ?, address = ?, subdistrict = ?, district = ?," +
-        " province = ?, latitude = ?, longitude = ?, latestUpdate = ? where dogID = ?",
+        " province = ?, latitude = ?, longitude = ?, latestUpdate = ?, isDelete = ? where dogID = ?",
       [
         data.dogType,
         data.gender,
@@ -59,6 +60,7 @@ exports.updateDog = function(data, callback) {
         data.latitude,
         data.longitude,
         now,
+        data.isDelete,
         data.dogID
       ],
       function(error, results, fields) {
@@ -172,7 +174,7 @@ exports.retrieveDogData = function(data, callback) {
     if (err) callback(err, null);
     else {
       connection.query(
-        "select * from dog where ownerID = ?",
+        "select * from dog where ownerID = ? and isDelete = 0",
         [data.ownerID],
         function(error, results, fields) {
           if (error) callback(error, null);
@@ -181,7 +183,7 @@ exports.retrieveDogData = function(data, callback) {
               dogs: results
             };
             connection.query(
-              "select * from dog_information i1 join (select s1.dogID, maxSubmitDate from dog d1 join (SELECT dogID, max(submitDate) as maxSubmitDate FROM doggy.dog_information group by dogID) s1 on d1.dogID = s1.dogID where ownerID = ?) b1 on i1.dogID = b1.dogID and i1.submitDate = b1.maxSubmitDate",
+              "select * from dog_information i1 join (select s1.dogID, maxSubmitDate from dog d1 join (SELECT dogID, max(submitDate) as maxSubmitDate FROM doggy.dog_information group by dogID) s1 on d1.dogID = s1.dogID where ownerID = ? and isDelete = 0) b1 on i1.dogID = b1.dogID and i1.submitDate = b1.maxSubmitDate",
               [data.ownerID],
               function(error, results, fields) {
                 if (error) callback(error, null);
@@ -191,7 +193,7 @@ exports.retrieveDogData = function(data, callback) {
                     dogInformations: results
                   };
                   connection.query(
-                    "select dog_vaccine.dogID, vaccineName, injectedDate from dog join dog_vaccine on dog.dogID = dog_vaccine.dogID where ownerID = ?",
+                    "select dog_vaccine.dogID, vaccineName, injectedDate from dog join dog_vaccine on dog.dogID = dog_vaccine.dogID where ownerID = ? and isDelete = 0",
                     [data.ownerID],
                     function(error, results, fields) {
                       if (error) callback(error, null);
@@ -201,7 +203,7 @@ exports.retrieveDogData = function(data, callback) {
                           vaccines: results
                         };
                         connection.query(
-                          "select dog_picture.dogID,side,picture from dog join dog_picture on dog.dogID = dog_picture.dogID where ownerID = ?",
+                          "select dog_picture.dogID,side,picture from dog join dog_picture on dog.dogID = dog_picture.dogID where ownerID = ? and isDelete = 0",
                           [data.ownerID],
                           function(error, results, fields) {
                             connection.release();
