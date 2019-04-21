@@ -23,5 +23,5 @@ module.exports = function(app) {
   app.route("/report").post(reportController.countAllDog);
   app.route("/report/:province").post(reportController.countDogByProvince);
   app.route("/reportregion").post(reportController.countDogByRegion);
-  app.route("/reportcsv").post(reportController.reportCsv);
+  app.route("/reportcsv").post(reportController.exportReportFiles);
 };
