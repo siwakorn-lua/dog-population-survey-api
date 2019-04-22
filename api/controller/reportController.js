@@ -7,7 +7,7 @@ const moment = require("moment");
 
 exports.countDogByRegion = function(req, res) {
   authController.verifyToken(req, res, function() {
-    if (req.body.username == "admin") {
+    if (req.body.username != "admin") {
       res
         .status(400)
         .json({ message: "You do not have an authority to access the data." });
@@ -50,9 +50,9 @@ exports.countDogByRegion = function(req, res) {
             databack[data].country == "Phitsanulok" ||
             databack[data].country == "Phichit"
           ) {
-            if (databack[data].dogType == "indoor") {
+            if (databack[data].dogType == "1") {
               indoor_north += databack[data].total;
-            } else if (databack[data].dogType == "outdoor") {
+            } else if (databack[data].dogType == "2") {
               outdoor_north += databack[data].total;
             } else {
               stray_north += databack[data].total;
@@ -81,9 +81,9 @@ exports.countDogByRegion = function(req, res) {
             databack[data].country == "Surin" ||
             databack[data].country == "Ubon Ratchathani"
           ) {
-            if (databack[data].dogType == "indoor") {
+            if (databack[data].dogType == "1") {
               indoor_neast += databack[data].total;
-            } else if (databack[data].dogType == "outdoor") {
+            } else if (databack[data].dogType == "2") {
               outdoor_neast += databack[data].total;
             } else {
               stray_neast += databack[data].total;
@@ -105,9 +105,9 @@ exports.countDogByRegion = function(req, res) {
             databack[data].country == "Phangnga" ||
             databack[data].country == "Satun"
           ) {
-            if (databack[data].dogType == "indoor") {
+            if (databack[data].dogType == "1") {
               indoor_south += databack[data].total;
-            } else if (databack[data].dogType == "outdoor") {
+            } else if (databack[data].dogType == "2") {
               outdoor_south += databack[data].total;
             } else {
               stray_south += databack[data].total;
@@ -115,9 +115,9 @@ exports.countDogByRegion = function(req, res) {
           }
           // Central
           else {
-            if (databack[data].dogType == "indoor") {
+            if (databack[data].dogType == "1") {
               indoor_central += databack[data].total;
-            } else if (databack[data].dogType == "outdoor") {
+            } else if (databack[data].dogType == "2") {
               outdoor_central += databack[data].total;
             } else {
               stray_central += databack[data].total;
@@ -165,37 +165,37 @@ exports.countAllDog = function(req, res) {
           numStray = databack[2].num;
         } else if (databack.length == 2) {
           if (
-            databack[0].dogType == "indoor" &&
-            databack[1].dogType == "outdoor"
+            databack[0].dogType == "1" &&
+            databack[1].dogType == "2"
           ) {
             numIndoor = databack[0].num;
             numOutdoor = databack[1].num;
             numStray = 0;
           } else if (
-            databack[0].dogType == "indoor" &&
-            databack[1].dogType == "stray"
+            databack[0].dogType == "1" &&
+            databack[1].dogType == "3"
           ) {
             numIndoor = databack[0].num;
             numOutdoor = 0;
             numStray = databack[1].num;
           } else if (
-            databack[0].dogType == "outdoor" &&
-            databack[1].dogType == "stray"
+            databack[0].dogType == "2" &&
+            databack[1].dogType == "3"
           ) {
             numIndoor = 0;
             numOutdoor = databack[0].num;
             numStray = databack[1].num;
           }
         } else if (databack.length == 1) {
-          if (databack[0].dogType == "indoor") {
+          if (databack[0].dogType == "1") {
             numIndoor = databack[0].num;
             numOutdoor = 0;
             numStray = 0;
-          } else if (databack[0].dogType == "outdoor") {
+          } else if (databack[0].dogType == "2") {
             numIndoor = 0;
             numOutdoor = databack[0].num;
             numStray = 0;
-          } else if (databack[0].dogType == "stray") {
+          } else if (databack[0].dogType == "3") {
             numIndoor = 0;
             numOutdoor = 0;
             numStray = databack[0].num;
@@ -217,7 +217,7 @@ exports.countAllDog = function(req, res) {
 
 exports.countDogByProvince = function(req, res) {
   authController.verifyToken(req, res, function() {
-    if (req.body.username == "admin") {
+    if (req.body.username != "admin") {
       res
         .status(400)
         .json({ message: "You do not have an authority to access the data." });
@@ -235,37 +235,37 @@ exports.countDogByProvince = function(req, res) {
             numStray = databack[2].num;
           } else if (databack.length == 2) {
             if (
-              databack[0].dogType == "indoor" &&
-              databack[1].dogType == "outdoor"
+              databack[0].dogType == "1" &&
+              databack[1].dogType == "2"
             ) {
               numIndoor = databack[0].num;
               numOutdoor = databack[1].num;
               numStray = 0;
             } else if (
-              databack[0].dogType == "indoor" &&
-              databack[1].dogType == "stray"
+              databack[0].dogType == "1" &&
+              databack[1].dogType == "3"
             ) {
               numIndoor = databack[0].num;
               numOutdoor = 0;
               numStray = databack[1].num;
             } else if (
-              databack[0].dogType == "outdoor" &&
-              databack[1].dogType == "stray"
+              databack[0].dogType == "2" &&
+              databack[1].dogType == "3"
             ) {
               numIndoor = 0;
               numOutdoor = databack[0].num;
               numStray = databack[1].num;
             }
           } else if (databack.length == 1) {
-            if (databack[0].dogType == "indoor") {
+            if (databack[0].dogType == "1") {
               numIndoor = databack[0].num;
               numOutdoor = 0;
               numStray = 0;
-            } else if (databack[0].dogType == "outdoor") {
+            } else if (databack[0].dogType == "2") {
               numIndoor = 0;
               numOutdoor = databack[0].num;
               numStray = 0;
-            } else if (databack[0].dogType == "stray") {
+            } else if (databack[0].dogType == "3") {
               numIndoor = 0;
               numOutdoor = 0;
               numStray = databack[0].num;
@@ -285,7 +285,6 @@ exports.countDogByProvince = function(req, res) {
 };
 
 exports.exportReportFiles = function(req, res) {
-  console.log("coming")
   authController.verifyToken(req, res, function() {
     if (req.body.username === "admin") {
       var tmp = req.body.email.split("@");
