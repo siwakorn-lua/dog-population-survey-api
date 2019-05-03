@@ -138,7 +138,6 @@ exports.addDogImage = function(req, res) {
             res.status(400).json({
               status: "Fail",
               message: "Your dog image has not been added.",
-              data: databack
             });
           } else {
             data = {

@@ -195,6 +195,7 @@ exports.countAllDog = function(req, res) {
 };
 
 exports.countDogByProvince = function(req, res) {
+  console.log("coming")
   authController.verifyToken(req, res, function() {
     reportModel.countDogByProvince(req.params.province, (error, databack) => {
       if (error) throw error;
@@ -242,6 +243,7 @@ exports.countDogByProvince = function(req, res) {
           outdoor: numOutdoor,
           stray: numStray
         };
+        console.log(dataOut);
         res.json(dataOut);
       }
     });
