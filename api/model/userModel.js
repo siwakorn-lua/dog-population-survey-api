@@ -324,9 +324,16 @@ exports.forgotPasswordForce = function(data, files, callback) {
       "update user set password = ? where username = ?",
       [encryptedPassword, data.username],
       function(err, results, fields) {
-        if (err) callback(err, null);
         connection.release();
-        callback(null, results);
+        if (err) {
+          callback(err, null);
+        } else {
+          if (results.affectedRows == 0) {
+            callback("This username doesn't exist");
+          } else {
+            callback(null, results);
+          }
+        }
       }
     );
   });
