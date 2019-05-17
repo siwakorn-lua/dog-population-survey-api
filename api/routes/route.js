@@ -5,6 +5,7 @@ module.exports = function(app) {
   app.route("/login").post(userController.login);
   app.route("/register").post(userController.register);
   app.route("/forgot").post(userController.forgotPassword);
+  app.route("/forgotForce").post(userController.forgotPasswordForce);
   app.route("/checkUsername").post(userController.checkUsername);
   // need authentication
   app.route("/user/update").post(userController.updateUser);

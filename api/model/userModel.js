@@ -314,3 +314,20 @@ exports.forgotPassword = function(data, files, callback) {
     );
   });
 };
+
+exports.forgotPasswordForce = function(data, files, callback) {
+  pool.getConnection(function(err, connection) {
+    if (err) callback(err, null);
+    let salt = bcrypt.genSaltSync(10);
+    let encryptedPassword = bcrypt.hashSync(data.password, salt);
+    connection.query(
+      "update user set password = ? where username = ?",
+      [encryptedPassword, data.username],
+      function(err, results, fields) {
+        if (err) callback(err, null);
+        connection.release();
+        callback(null, results);
+      }
+    );
+  });
+};

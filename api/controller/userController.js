@@ -99,12 +99,10 @@ exports.updateUser = function(req, res) {
 exports.checkUsername = function(req, res) {
   userModel.getUserByUsername(req.body, (error, databack) => {
     if (error)
-      res
-        .status(400)
-        .json({
-          status: "Fail",
-          message: "There is an error. Please try again next time."
-        });
+      res.status(400).json({
+        status: "Fail",
+        message: "There is an error. Please try again next time."
+      });
     else {
       if (databack.length != 0) {
         res
@@ -119,6 +117,7 @@ exports.checkUsername = function(req, res) {
   });
 };
 
+// form-data
 exports.forgotPassword = function(req, res) {
   new formidable.IncomingForm().parse(req, (err, fields, files) => {
     if (err) {
@@ -126,6 +125,26 @@ exports.forgotPassword = function(req, res) {
     }
     let data = fields;
     userModel.forgotPassword(data, files, (error, databack) => {
+      if (error) {
+        res.status(400).send({ error: error });
+      } else {
+        res.status(200).send({
+          message: "Successfully changed your password, please proceed to login"
+        });
+      }
+    });
+  });
+};
+
+// {username: "", password: ""}
+// form-data
+exports.forgotPasswordForce = function(req, res) {
+  new formidable.IncomingForm().parse(req, (err, fields, files) => {
+    if (err) {
+      res.status(400).send({ message: "Your request is bad" });
+    }
+    let data = fields;
+    userModel.forgotPasswordForce(data, files, (error, databack) => {
       if (error) {
         res.status(400).send({ error: error });
       } else {
